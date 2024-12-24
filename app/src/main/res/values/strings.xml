@@ -3,4 +3,6 @@
     <string name="home">Home</string>
     <string name="explore">Explore</string>
     <string name="favorite">Favorite</string>
+    <string name="more">More</string>
+    <string name="popular_now">Popular Now</string>
 </resources>
