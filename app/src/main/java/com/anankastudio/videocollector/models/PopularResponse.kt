@@ -6,6 +6,7 @@ data class PopularResponse(
     val page: Int? = null,
     @SerializedName("per_page")
     val perPage: Int? = null,
+    val videos: List<Video>? = null,
     @SerializedName("total_results")
     val totalResults: Int? = null,
     @SerializedName("next_page")
