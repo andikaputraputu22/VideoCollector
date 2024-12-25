@@ -26,6 +26,12 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            buildConfigField("String", "BASE_URL", "\"https://api.pexels.com/videos/\"")
+            buildConfigField("String", "API_KEY", "\"CTkdChy7YYvi0TVFGn0R6gKoWAYEs5ncQRupkwgQ9mnr3s1agdwlYSYN\"")
+        }
+        debug {
+            buildConfigField("String", "BASE_URL", "\"https://api.pexels.com/videos/\"")
+            buildConfigField("String", "API_KEY", "\"CTkdChy7YYvi0TVFGn0R6gKoWAYEs5ncQRupkwgQ9mnr3s1agdwlYSYN\"")
         }
     }
     compileOptions {
@@ -37,6 +43,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 
@@ -48,8 +55,13 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.smoothbottombar)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.swiperefreshlayout)
+    implementation(libs.glide)
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
+    annotationProcessor(libs.glide.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

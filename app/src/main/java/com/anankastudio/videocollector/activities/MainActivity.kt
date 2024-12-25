@@ -12,7 +12,9 @@ import com.anankastudio.videocollector.databinding.ActivityMainBinding
 import com.anankastudio.videocollector.fragments.FragmentExplore
 import com.anankastudio.videocollector.fragments.FragmentFavorite
 import com.anankastudio.videocollector.fragments.FragmentHome
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -24,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        replaceFragment(homeFragment)
+        showFragment(homeFragment)
 
         setupStatusBar()
         setupBottomNavigation()
@@ -54,16 +56,24 @@ class MainActivity : AppCompatActivity() {
     private fun setupBottomNavigation() {
         binding.bottomNavigation.onItemSelected = { position ->
             when(position) {
-                0 -> replaceFragment(homeFragment)
-                1 -> replaceFragment(exploreFragment)
-                2 -> replaceFragment(favoriteFragment)
+                0 -> showFragment(homeFragment)
+                1 -> showFragment(exploreFragment)
+                2 -> showFragment(favoriteFragment)
             }
         }
     }
 
-    private fun replaceFragment(fragment: Fragment) {
+    private fun showFragment(fragment: Fragment) {
         val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.fragmentContainer, fragment)
+        supportFragmentManager.fragments.forEach { existingFragment ->
+            transaction.hide(existingFragment)
+        }
+
+        if (supportFragmentManager.fragments.contains(fragment)) {
+            transaction.show(fragment)
+        } else {
+            transaction.add(R.id.fragmentContainer, fragment)
+        }
         transaction.commit()
     }
 }
