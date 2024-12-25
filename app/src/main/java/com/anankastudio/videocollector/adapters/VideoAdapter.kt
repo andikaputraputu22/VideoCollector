@@ -21,12 +21,16 @@ class VideoAdapter : RecyclerView.Adapter<ItemVideo>() {
     override fun getItemCount() = listVideo.size
 
     override fun onBindViewHolder(holder: ItemVideo, position: Int) {
-        holder.bind()
+        holder.bind(listVideo[position])
     }
 
     fun setData(items: List<Video>) {
-        listVideo.clear()
         listVideo.addAll(items)
+        notifyItemRangeInserted((listVideo.size - items.size), items.size)
+    }
+
+    fun clear() {
+        listVideo.clear()
         notifyDataSetChanged()
     }
 }
