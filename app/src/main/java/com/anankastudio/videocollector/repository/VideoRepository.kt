@@ -11,9 +11,9 @@ class VideoRepository @Inject constructor(
     private val apiService: ApiService
 ) {
 
-    suspend fun fetchPopularVideo(): Result<PopularResponse> = withContext(Dispatchers.IO) {
+    suspend fun fetchPopularVideo(page: Int): Result<PopularResponse> = withContext(Dispatchers.IO) {
         try {
-            val response = apiService.getPopularVideo()
+            val response = apiService.getPopularVideo(page)
             if (response.isSuccessful) {
                 response.body()?.let {
                     Result.Success(it)
