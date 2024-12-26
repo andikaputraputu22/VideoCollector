@@ -53,6 +53,8 @@ class FragmentHome : Fragment() {
     }
 
     private fun firstLoadVideo() {
+        if (viewModel.loading.value == true
+            || viewModel.loadingMore.value == true) return
         videoAdapter.clear()
         viewModel.page = 1
         viewModel.pageTotal = 1
@@ -79,15 +81,18 @@ class FragmentHome : Fragment() {
         binding.rvVideo.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                val layoutManager = binding.rvVideo.layoutManager as StaggeredGridLayoutManager
-                val visibleItemPositions = layoutManager.findLastVisibleItemPositions(null)
-                val lastVisibleItemPosition = visibleItemPositions.maxOrNull() ?: 0
-                val totalItemCount = layoutManager.itemCount
-                if (lastVisibleItemPosition == totalItemCount - 1
-                    && viewModel.page <= viewModel.pageTotal
-                    && viewModel.loadingMore.value == false) {
-                    viewModel.loadingMore.value = true
-                    viewModel.getPopularVideo()
+            }
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    val layoutManager = binding.rvVideo.layoutManager as StaggeredGridLayoutManager
+                    val visibleItemPositions = layoutManager.findLastVisibleItemPositions(null)
+                    val lastVisibleItemPosition = visibleItemPositions.maxOrNull() ?: 0
+                    val totalItemCount = layoutManager.itemCount
+
+                    if (lastVisibleItemPosition == totalItemCount - 1) {
+                        viewModel.onScrolledToEnd()
+                    }
                 }
             }
         })

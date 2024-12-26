@@ -51,4 +51,11 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
+
+    fun onScrolledToEnd() {
+        if (loading.value != true && loadingMore.value != true && page <= pageTotal) {
+            loadingMore.value = true
+            getPopularVideo()
+        }
+    }
 }
