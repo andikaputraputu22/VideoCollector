@@ -7,4 +7,6 @@
     <string name="popular_now">Popular Now</string>
     <string name="cover_video">Cover Video</string>
     <string name="sign_video">Sign Video</string>
+    <string name="filter_video">Filter Video</string>
+    <string name="search_video">Search free video</string>
 </resources>
