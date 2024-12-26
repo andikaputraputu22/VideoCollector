@@ -37,7 +37,7 @@ class HomeViewModel @Inject constructor(
                         val totalPage = data.totalResults ?: 0
                         val totalResults: Double = totalPage/perPage.toDouble()
                         pageTotal = ceil(totalResults).toInt()
-                        val listVideo = result.data.videos
+                        val listVideo = data.videos
                         _listVideo.postValue(listVideo)
                         page++
                     }

@@ -11,4 +11,10 @@ interface ApiService {
     suspend fun getPopularVideo(
         @Query("page") page: Int
     ): Response<PopularResponse>
+
+    @GET("search")
+    suspend fun getSearchVideo(
+        @Query("page") page: Int,
+        @Query("query") query: String
+    ): Response<PopularResponse>
 }

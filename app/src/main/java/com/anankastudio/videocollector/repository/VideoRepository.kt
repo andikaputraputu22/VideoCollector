@@ -25,4 +25,22 @@ class VideoRepository @Inject constructor(
             Result.Error("Exception occurred: ${e.message}")
         }
     }
+
+    suspend fun fetchSearchVideo(
+        page: Int,
+        query: String = ""
+    ): Result<PopularResponse> = withContext(Dispatchers.IO) {
+        try {
+            val response = apiService.getSearchVideo(page, query)
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    Result.Success(it)
+                } ?: Result.Error("Response body is null")
+            } else {
+                Result.Error("Failed to fetch data: ${response.code()}")
+            }
+        } catch (e: Exception) {
+            Result.Error("Exception occurred: ${e.message}")
+        }
+    }
 }
