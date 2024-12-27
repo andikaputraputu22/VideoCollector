@@ -1,6 +1,8 @@
 package com.anankastudio.videocollector.repository
 
 import com.anankastudio.videocollector.api.ApiService
+import com.anankastudio.videocollector.models.Collection
+import com.anankastudio.videocollector.models.FeaturedCollectionResponse
 import com.anankastudio.videocollector.models.PopularResponse
 import com.anankastudio.videocollector.utilities.Result
 import kotlinx.coroutines.Dispatchers
@@ -41,6 +43,21 @@ class VideoRepository @Inject constructor(
             }
         } catch (e: Exception) {
             Result.Error("Exception occurred: ${e.message}")
+        }
+    }
+
+    suspend fun fetchFeaturedCollection(page: Int): List<Collection> = withContext(Dispatchers.IO) {
+        try {
+            val response = apiService.getFeaturedCollection(page)
+            if (response.isSuccessful) {
+                response.body()?.collections?.filter {
+                    it.videosCount != null && it.videosCount != 0
+                }?.take(4) ?: emptyList()
+            } else {
+                emptyList()
+            }
+        } catch (e: Exception) {
+            emptyList()
         }
     }
 }
