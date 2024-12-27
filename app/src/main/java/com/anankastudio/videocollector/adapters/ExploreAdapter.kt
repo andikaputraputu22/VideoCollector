@@ -5,10 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.anankastudio.videocollector.databinding.ItemVideoBinding
 import com.anankastudio.videocollector.interfaces.ExplorePage
-import com.anankastudio.videocollector.models.item.LandscapeVideo
-import com.anankastudio.videocollector.models.item.PortraitVideo
-import com.anankastudio.videocollector.models.item.RandomVideo
-import com.anankastudio.videocollector.viewholders.ItemRandomVideo
+import com.anankastudio.videocollector.models.item.ContentVideo
+import com.anankastudio.videocollector.viewholders.ItemContentVideo
 
 class ExploreAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -16,34 +14,32 @@ class ExploreAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         when(viewType) {
-            RANDOM_VIDEO -> {
+            CONTENT_VIDEO -> {
                 val binding = ItemVideoBinding.inflate(
                     LayoutInflater.from(parent.context), parent, false
                 )
-                return ItemRandomVideo(binding)
+                return ItemContentVideo(binding)
             }
         }
         val binding = ItemVideoBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
         )
-        return ItemRandomVideo(binding)
+        return ItemContentVideo(binding)
     }
 
     override fun getItemCount() = listVideo.size
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when(holder) {
-            is ItemRandomVideo -> holder.bind(listVideo[position] as RandomVideo)
+            is ItemContentVideo -> holder.bind(listVideo[position] as ContentVideo)
         }
     }
 
     override fun getItemViewType(position: Int): Int {
         when(listVideo[position]) {
-            is RandomVideo -> return RANDOM_VIDEO
-            is PortraitVideo -> return PORTRAIT_VIDEO
-            is LandscapeVideo -> return LANDSCAPE_VIDEO
+            is ContentVideo -> return CONTENT_VIDEO
         }
-        return RANDOM_VIDEO
+        return CONTENT_VIDEO
     }
 
     fun setData(items: List<ExplorePage>) {
@@ -57,8 +53,6 @@ class ExploreAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     companion object {
-        const val RANDOM_VIDEO = 1
-        const val PORTRAIT_VIDEO = 2
-        const val LANDSCAPE_VIDEO = 3
+        const val CONTENT_VIDEO = 1
     }
 }

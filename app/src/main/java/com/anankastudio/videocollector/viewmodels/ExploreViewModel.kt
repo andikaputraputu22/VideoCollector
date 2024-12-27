@@ -7,9 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.anankastudio.videocollector.interfaces.ExplorePage
 import com.anankastudio.videocollector.models.Video
-import com.anankastudio.videocollector.models.item.LandscapeVideo
-import com.anankastudio.videocollector.models.item.PortraitVideo
-import com.anankastudio.videocollector.models.item.RandomVideo
+import com.anankastudio.videocollector.models.item.ContentVideo
 import com.anankastudio.videocollector.repository.VideoRepository
 import com.anankastudio.videocollector.utilities.Constants
 import com.anankastudio.videocollector.utilities.Result
@@ -27,7 +25,7 @@ class ExploreViewModel @Inject constructor(
 
     var page = 1
     var query = ""
-    var orientation = ""
+    var typeContent = Constants.TYPE_CONTENT_VIDEO
     var pageTotal = 1
     val loading by lazy { MutableLiveData<Boolean>() }
     val loadingMore by lazy { MutableLiveData<Boolean>() }
@@ -65,19 +63,9 @@ class ExploreViewModel @Inject constructor(
     private fun processContentVideo(videos: List<Video>?): List<ExplorePage> {
         val content: MutableList<ExplorePage> = mutableListOf()
         videos?.forEach {
-            if (orientation == Constants.RANDOM_VIDEO) {
-                val randomVideo = RandomVideo()
-                randomVideo.item = it
-                content.add(randomVideo)
-            } else if (orientation == Constants.PORTRAIT_VIDEO) {
-                val portraitVideo = PortraitVideo()
-                portraitVideo.item = it
-                content.add(portraitVideo)
-            } else {
-                val landscapeVideo = LandscapeVideo()
-                landscapeVideo.item = it
-                content.add(landscapeVideo)
-            }
+            val contentVideo = ContentVideo()
+            contentVideo.item = it
+            content.add(contentVideo)
         }
 
         return content

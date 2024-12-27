@@ -13,7 +13,6 @@ import android.view.inputmethod.EditorInfo
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -47,6 +46,7 @@ class FragmentExplore : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel.typeContent = Constants.TYPE_CONTENT_VIDEO
         clearButtonDrawable = ContextCompat.getDrawable(
             requireContext(), R.drawable.ic_clear
         )
@@ -102,13 +102,9 @@ class FragmentExplore : Fragment() {
     private fun setupListVideo() {
         val space = resources.getDimensionPixelSize(R.dimen.item_spacing_video)
         clearItemDecorations(binding.rvVideo)
-        when (viewModel.orientation) {
-            Constants.RANDOM_VIDEO -> {
+        when (viewModel.typeContent) {
+            Constants.TYPE_CONTENT_VIDEO -> {
                 binding.rvVideo.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-                binding.rvVideo.addItemDecoration(SpaceItemDecoration(space))
-            }
-            Constants.PORTRAIT_VIDEO -> {
-                binding.rvVideo.layoutManager = GridLayoutManager(requireContext(), 2)
                 binding.rvVideo.addItemDecoration(SpaceItemDecoration(space))
             }
             else -> {
