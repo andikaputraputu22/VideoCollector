@@ -33,6 +33,31 @@ class ExploreViewModel @Inject constructor(
     private val _listVideo = MutableLiveData<List<ExplorePage>?>()
     val listVideo: LiveData<List<ExplorePage>?> = _listVideo
 
+    fun getCollectionVideo() {
+        loading.value = true
+        viewModelScope.launch {
+            try {
+                when(val result = videoRepository.fetchAllCollectionItems(page)) {
+                    is Result.Success -> {
+                        val data = result.data
+                        val perPage = data.perPage ?: 15
+                        val totalPage = data.totalResults ?: 0
+                        val totalResults: Double = totalPage/perPage.toDouble()
+                        pageTotal = ceil(totalResults).toInt()
+                        _listVideo.postValue(data.items)
+                        page++
+                    }
+                    is Result.Error -> {
+                        pageTotal = -1
+                    }
+                }
+            } finally {
+                loading.value = false
+                loadingMore.value = false
+            }
+        }
+    }
+
     fun getSearchVideo() {
         if (page > pageTotal) return
         if (page > 1) loadingMore.value = true else loading.value = true

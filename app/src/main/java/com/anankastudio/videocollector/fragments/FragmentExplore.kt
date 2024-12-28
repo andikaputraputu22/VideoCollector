@@ -46,7 +46,7 @@ class FragmentExplore : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.typeContent = Constants.TYPE_CONTENT_VIDEO
+        viewModel.typeContent = Constants.TYPE_CONTENT_COLLECTION
         clearButtonDrawable = ContextCompat.getDrawable(
             requireContext(), R.drawable.ic_clear
         )
@@ -55,8 +55,13 @@ class FragmentExplore : Fragment() {
         setupListVideo()
         observeData()
         checkScrollVideoList()
+        firstLoadCollection()
         binding.swipeRefresh.setOnRefreshListener {
-            firstLoadVideo()
+            if (viewModel.typeContent == Constants.TYPE_CONTENT_COLLECTION) {
+                firstLoadCollection()
+            } else {
+                firstLoadVideo()
+            }
         }
     }
 
@@ -89,6 +94,8 @@ class FragmentExplore : Fragment() {
                 EditorInfo.IME_ACTION_SEARCH -> {
                     viewModel.query = binding.inputSearch.text.toString()
                     if (viewModel.query.isNotBlank()) {
+                        viewModel.typeContent = Constants.TYPE_CONTENT_VIDEO
+                        updateRecyclerViewLayout()
                         firstLoadVideo()
                         activity?.let { viewModel.hideKeyboard(it) }
                     }
@@ -100,6 +107,11 @@ class FragmentExplore : Fragment() {
     }
 
     private fun setupListVideo() {
+        updateRecyclerViewLayout()
+        binding.rvVideo.adapter = exploreAdapter
+    }
+
+    private fun updateRecyclerViewLayout() {
         val space = resources.getDimensionPixelSize(R.dimen.item_spacing_video)
         clearItemDecorations(binding.rvVideo)
         when (viewModel.typeContent) {
@@ -111,7 +123,6 @@ class FragmentExplore : Fragment() {
                 binding.rvVideo.layoutManager = LinearLayoutManager(requireContext())
             }
         }
-        binding.rvVideo.adapter = exploreAdapter
     }
 
     private fun clearItemDecorations(recyclerView: RecyclerView) {
@@ -120,13 +131,22 @@ class FragmentExplore : Fragment() {
         }
     }
 
-    private fun firstLoadVideo() {
+    private fun initList() {
         if (viewModel.loading.value == true
             || viewModel.loadingMore.value == true) return
         exploreAdapter.clear()
         viewModel.page = 1
         viewModel.pageTotal = 1
+    }
+
+    private fun firstLoadVideo() {
+        initList()
         viewModel.getSearchVideo()
+    }
+
+    private fun firstLoadCollection() {
+        initList()
+        viewModel.getCollectionVideo()
     }
 
     private fun observeData() {
@@ -149,13 +169,15 @@ class FragmentExplore : Fragment() {
         binding.rvVideo.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    val layoutManager = binding.rvVideo.layoutManager as StaggeredGridLayoutManager
-                    val visibleItemPositions = layoutManager.findLastVisibleItemPositions(null)
-                    val lastVisibleItemPosition = visibleItemPositions.maxOrNull() ?: 0
-                    val totalItemCount = layoutManager.itemCount
+                    if (viewModel.typeContent == Constants.TYPE_CONTENT_VIDEO) {
+                        val layoutManager = binding.rvVideo.layoutManager as StaggeredGridLayoutManager
+                        val visibleItemPositions = layoutManager.findLastVisibleItemPositions(null)
+                        val lastVisibleItemPosition = visibleItemPositions.maxOrNull() ?: 0
+                        val totalItemCount = layoutManager.itemCount
 
-                    if (lastVisibleItemPosition == totalItemCount - 1) {
-                        viewModel.onScrolledToEnd()
+                        if (lastVisibleItemPosition == totalItemCount - 1) {
+                            viewModel.onScrolledToEnd()
+                        }
                     }
                 }
             }
