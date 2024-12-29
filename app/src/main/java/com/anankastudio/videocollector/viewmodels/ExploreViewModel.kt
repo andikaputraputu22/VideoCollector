@@ -33,8 +33,12 @@ class ExploreViewModel @Inject constructor(
     private val _listVideo = MutableLiveData<List<ExplorePage>?>()
     val listVideo: LiveData<List<ExplorePage>?> = _listVideo
 
+    private val _isSearchActive = MutableLiveData<Boolean>()
+    val isSearchActive: LiveData<Boolean> = _isSearchActive
+
     fun getCollectionVideo() {
-        loading.value = true
+        if (page > pageTotal) return
+        if (page > 1) loadingMore.value = true else loading.value = true
         viewModelScope.launch {
             try {
                 when(val result = videoRepository.fetchAllCollectionItems(page)) {
@@ -54,6 +58,7 @@ class ExploreViewModel @Inject constructor(
             } finally {
                 loading.value = false
                 loadingMore.value = false
+                _isSearchActive.postValue(false)
             }
         }
     }
@@ -81,6 +86,7 @@ class ExploreViewModel @Inject constructor(
             } finally {
                 loading.value = false
                 loadingMore.value = false
+                _isSearchActive.postValue(true)
             }
         }
     }
@@ -99,7 +105,11 @@ class ExploreViewModel @Inject constructor(
     fun onScrolledToEnd() {
         if (loading.value != true && loadingMore.value != true && page <= pageTotal) {
             loadingMore.value = true
-            getSearchVideo()
+            if (typeContent == Constants.TYPE_CONTENT_VIDEO) {
+                getSearchVideo()
+            } else {
+                getCollectionVideo()
+            }
         }
     }
 

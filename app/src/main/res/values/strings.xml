@@ -9,4 +9,6 @@
     <string name="sign_video">Sign Video</string>
     <string name="filter_video">Filter Video</string>
     <string name="search_video">Search free video</string>
+    <string name="videos">Videos</string>
+    <string name="back">Back</string>
 </resources>

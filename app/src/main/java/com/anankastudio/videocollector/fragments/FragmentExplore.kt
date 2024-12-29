@@ -29,7 +29,7 @@ class FragmentExplore : Fragment() {
 
     private var _binding: FragmentExploreBinding? = null
     private val binding get() = _binding!!
-    private lateinit var viewModel: ExploreViewModel
+    lateinit var viewModel: ExploreViewModel
     private var clearButtonDrawable: Drawable? = null
     private val exploreAdapter = ExploreAdapter()
 
@@ -104,6 +104,18 @@ class FragmentExplore : Fragment() {
                 else -> false
             }
         }
+
+        binding.back.setOnClickListener {
+            loadCollectionContent()
+        }
+    }
+
+    fun loadCollectionContent() {
+        binding.back.visibility = View.GONE
+        binding.inputSearch.text.clear()
+        viewModel.typeContent = Constants.TYPE_CONTENT_COLLECTION
+        updateRecyclerViewLayout()
+        firstLoadCollection()
     }
 
     private fun setupListVideo() {
@@ -163,6 +175,10 @@ class FragmentExplore : Fragment() {
         viewModel.loadingMore.observe(viewLifecycleOwner) {
             binding.progressIndicator.visibility = if (it) View.VISIBLE else View.GONE
         }
+
+        viewModel.isSearchActive.observe(viewLifecycleOwner) {
+            binding.back.visibility = if (it) View.VISIBLE else View.GONE
+        }
     }
 
     private fun checkScrollVideoList() {
@@ -173,6 +189,14 @@ class FragmentExplore : Fragment() {
                         val layoutManager = binding.rvVideo.layoutManager as StaggeredGridLayoutManager
                         val visibleItemPositions = layoutManager.findLastVisibleItemPositions(null)
                         val lastVisibleItemPosition = visibleItemPositions.maxOrNull() ?: 0
+                        val totalItemCount = layoutManager.itemCount
+
+                        if (lastVisibleItemPosition == totalItemCount - 1) {
+                            viewModel.onScrolledToEnd()
+                        }
+                    } else {
+                        val layoutManager = binding.rvVideo.layoutManager as LinearLayoutManager
+                        val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
                         val totalItemCount = layoutManager.itemCount
 
                         if (lastVisibleItemPosition == totalItemCount - 1) {

@@ -7,18 +7,32 @@
     android:background="@color/bg_color"
     android:orientation="vertical">
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvCollection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <TextView
         android:id="@+id/titleBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginHorizontal="4dp"
         android:textColor="@android:color/white"
         android:textSize="18sp"
         android:fontFamily="@font/montserrat_medium"
         tools:text="Making Music" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvCollection"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="4dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="32dp"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="14sp"
+        android:fontFamily="@font/montserrat_regular"
+        tools:text="123 Videos" />
 
 </LinearLayout>

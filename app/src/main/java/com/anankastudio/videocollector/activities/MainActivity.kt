@@ -76,4 +76,18 @@ class MainActivity : AppCompatActivity() {
         }
         transaction.commit()
     }
+
+    override fun onBackPressed() {
+        val activeFragment = supportFragmentManager.fragments.find { !it.isHidden }
+        if (activeFragment is FragmentExplore) {
+            val viewModel = activeFragment.viewModel
+            if (viewModel.isSearchActive.value == true) {
+                activeFragment.loadCollectionContent()
+            } else {
+                super.onBackPressed()
+            }
+        } else {
+            super.onBackPressed()
+        }
+    }
 }
