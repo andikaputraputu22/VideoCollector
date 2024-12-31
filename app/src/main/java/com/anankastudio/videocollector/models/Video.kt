@@ -3,6 +3,7 @@ package com.anankastudio.videocollector.models
 import com.google.gson.annotations.SerializedName
 
 data class Video(
+    val type: String? = null,
     val id: Long? = null,
     val width: Int? = null,
     val height: Int? = null,
