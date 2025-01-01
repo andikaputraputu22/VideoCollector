@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.anankastudio.videocollector.R
 import com.anankastudio.videocollector.adapters.ExploreAdapter
+import com.anankastudio.videocollector.bottomsheet.FilterBottomSheet
 import com.anankastudio.videocollector.databinding.FragmentExploreBinding
 import com.anankastudio.videocollector.utilities.Constants
 import com.anankastudio.videocollector.utilities.SpaceItemDecoration
@@ -32,6 +33,7 @@ class FragmentExplore : Fragment() {
     lateinit var viewModel: ExploreViewModel
     private var clearButtonDrawable: Drawable? = null
     private val exploreAdapter = ExploreAdapter()
+    private val filterBottomSheet = FilterBottomSheet()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -107,6 +109,10 @@ class FragmentExplore : Fragment() {
 
         binding.back.setOnClickListener {
             loadCollectionContent()
+        }
+
+        binding.filter.setOnClickListener {
+            showFilterBottomSheet()
         }
     }
 
@@ -226,6 +232,13 @@ class FragmentExplore : Fragment() {
                 drawables[3]
             )
         }
+    }
+
+    private fun showFilterBottomSheet() {
+        filterBottomSheet.show(
+            childFragmentManager,
+            FilterBottomSheet.TAG
+        )
     }
 
     override fun onDestroyView() {

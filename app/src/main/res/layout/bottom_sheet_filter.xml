@@ -1,6 +1,201 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/bg_rounded_bottom_sheet">
+
+    <TextView
+        android:id="@+id/titleBottomSheet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/filters"
+        android:textColor="@android:color/white"
+        android:textSize="22sp"
+        android:fontFamily="@font/montserrat_medium"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/clearFilters"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/clear"
+        android:textAllCaps="false"
+        android:textColor="@android:color/holo_green_dark"
+        android:textSize="14sp"
+        android:fontFamily="@font/montserrat_medium"
+        android:background="@android:color/transparent"
+        app:layout_constraintTop_toTopOf="@+id/titleBottomSheet"
+        app:layout_constraintBottom_toBottomOf="@+id/titleBottomSheet"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="32dp"
+        android:paddingHorizontal="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleBottomSheet"
+        app:layout_constraintBottom_toTopOf="@+id/applyFilters">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/orientation"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:fontFamily="@font/montserrat_medium" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="16dp"
+                android:orientation="vertical"
+                android:background="@drawable/bg_filter">
+
+                <TextView
+                    android:id="@+id/allOrientation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:text="@string/all_orientation"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/montserrat_regular"
+                    app:drawableEndCompat="@drawable/ic_check"
+                    app:drawableTint="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/portrait"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:background="@android:color/transparent"
+                    android:text="@string/portrait"
+                    android:textColor="@android:color/darker_gray"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/montserrat_regular"
+                    app:drawableEndCompat="@drawable/ic_check"
+                    app:drawableTint="@android:color/transparent" />
+
+                <TextView
+                    android:id="@+id/landscape"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:background="@android:color/transparent"
+                    android:text="@string/landscape"
+                    android:textColor="@android:color/darker_gray"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/montserrat_regular"
+                    app:drawableEndCompat="@drawable/ic_check"
+                    app:drawableTint="@android:color/transparent" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="@string/sizes"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:fontFamily="@font/montserrat_medium" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="16dp"
+                android:orientation="vertical"
+                android:background="@drawable/bg_filter">
+
+                <TextView
+                    android:id="@+id/allSizes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:text="@string/all_sizes"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/montserrat_regular"
+                    app:drawableEndCompat="@drawable/ic_check"
+                    app:drawableTint="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/large"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:background="@android:color/transparent"
+                    android:text="@string/large"
+                    android:textColor="@android:color/darker_gray"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/montserrat_regular"
+                    app:drawableEndCompat="@drawable/ic_check"
+                    app:drawableTint="@android:color/transparent" />
+
+                <TextView
+                    android:id="@+id/medium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:background="@android:color/transparent"
+                    android:text="@string/medium"
+                    android:textColor="@android:color/darker_gray"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/montserrat_regular"
+                    app:drawableEndCompat="@drawable/ic_check"
+                    app:drawableTint="@android:color/transparent" />
+
+                <TextView
+                    android:id="@+id/small"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:background="@android:color/transparent"
+                    android:text="@string/small"
+                    android:textColor="@android:color/darker_gray"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/montserrat_regular"
+                    app:drawableEndCompat="@drawable/ic_check"
+                    app:drawableTint="@android:color/transparent" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/applyFilters"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_btn"
+        android:text="@string/apply_filters"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:fontFamily="@font/montserrat_medium"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
