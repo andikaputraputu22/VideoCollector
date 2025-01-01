@@ -18,7 +18,9 @@ interface ApiService {
     @GET("videos/search")
     suspend fun getSearchVideo(
         @Query("page") page: Int,
-        @Query("query") query: String
+        @Query("query") query: String,
+        @Query("orientation") orientation: String,
+        @Query("size") size: String
     ): Response<PopularResponse>
 
     @GET("collections/featured")

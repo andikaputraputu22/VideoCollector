@@ -34,10 +34,12 @@ class VideoRepository @Inject constructor(
 
     suspend fun fetchSearchVideo(
         page: Int,
-        query: String = ""
+        query: String = "",
+        orientation: String = "",
+        size: String = ""
     ): Result<PopularResponse> = withContext(Dispatchers.IO) {
         try {
-            val response = apiService.getSearchVideo(page, query)
+            val response = apiService.getSearchVideo(page, query, orientation, size)
             if (response.isSuccessful) {
                 response.body()?.let {
                     Result.Success(it)

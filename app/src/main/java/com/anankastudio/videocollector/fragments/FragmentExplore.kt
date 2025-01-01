@@ -20,13 +20,14 @@ import com.anankastudio.videocollector.R
 import com.anankastudio.videocollector.adapters.ExploreAdapter
 import com.anankastudio.videocollector.bottomsheet.FilterBottomSheet
 import com.anankastudio.videocollector.databinding.FragmentExploreBinding
+import com.anankastudio.videocollector.interfaces.OnClickFilter
 import com.anankastudio.videocollector.utilities.Constants
 import com.anankastudio.videocollector.utilities.SpaceItemDecoration
 import com.anankastudio.videocollector.viewmodels.ExploreViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class FragmentExplore : Fragment() {
+class FragmentExplore : Fragment(), OnClickFilter {
 
     private var _binding: FragmentExploreBinding? = null
     private val binding get() = _binding!!
@@ -58,6 +59,7 @@ class FragmentExplore : Fragment() {
         observeData()
         checkScrollVideoList()
         firstLoadCollection()
+        checkFilter()
         binding.swipeRefresh.setOnRefreshListener {
             if (viewModel.typeContent == Constants.TYPE_CONTENT_COLLECTION) {
                 firstLoadCollection()
@@ -65,6 +67,20 @@ class FragmentExplore : Fragment() {
                 firstLoadVideo()
             }
         }
+    }
+
+    override fun onClickApplyFilters() {
+        if (viewModel.typeContent == Constants.TYPE_CONTENT_VIDEO) {
+            firstLoadVideo()
+        }
+        checkFilter()
+    }
+
+    override fun onClickClearFilters() {
+        if (viewModel.typeContent == Constants.TYPE_CONTENT_VIDEO) {
+            firstLoadVideo()
+        }
+        checkFilter()
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -235,10 +251,19 @@ class FragmentExplore : Fragment() {
     }
 
     private fun showFilterBottomSheet() {
+        filterBottomSheet.listener = this
         filterBottomSheet.show(
             childFragmentManager,
             FilterBottomSheet.TAG
         )
+    }
+
+    private fun checkFilter() {
+        if (viewModel.isFilterExist()) {
+            binding.filter.setBackgroundResource(R.drawable.bg_btn_circle_outline_filter)
+        } else {
+            binding.filter.setBackgroundResource(R.drawable.bg_btn_circle_outline)
+        }
     }
 
     override fun onDestroyView() {
