@@ -26,11 +26,11 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("String", "BASE_URL", "\"https://api.pexels.com/videos/\"")
+            buildConfigField("String", "BASE_URL", "\"https://api.pexels.com/v1/\"")
             buildConfigField("String", "API_KEY", "\"CTkdChy7YYvi0TVFGn0R6gKoWAYEs5ncQRupkwgQ9mnr3s1agdwlYSYN\"")
         }
         debug {
-            buildConfigField("String", "BASE_URL", "\"https://api.pexels.com/videos/\"")
+            buildConfigField("String", "BASE_URL", "\"https://api.pexels.com/v1/\"")
             buildConfigField("String", "API_KEY", "\"CTkdChy7YYvi0TVFGn0R6gKoWAYEs5ncQRupkwgQ9mnr3s1agdwlYSYN\"")
         }
     }

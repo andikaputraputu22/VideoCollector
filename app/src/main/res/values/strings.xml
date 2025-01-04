@@ -7,4 +7,20 @@
     <string name="popular_now">Popular Now</string>
     <string name="cover_video">Cover Video</string>
     <string name="sign_video">Sign Video</string>
+    <string name="filter_video">Filter Video</string>
+    <string name="search_video">Search free video</string>
+    <string name="videos">Videos</string>
+    <string name="back">Back</string>
+    <string name="filters">Filters</string>
+    <string name="apply_filters">Apply Filters</string>
+    <string name="clear">Clear</string>
+    <string name="orientation">Orientation</string>
+    <string name="all_orientation">All Orientation</string>
+    <string name="portrait">Portrait</string>
+    <string name="landscape">Landscape</string>
+    <string name="sizes">Sizes</string>
+    <string name="all_sizes">All Sizes</string>
+    <string name="large">Large</string>
+    <string name="medium">Medium</string>
+    <string name="small">Small</string>
 </resources>
