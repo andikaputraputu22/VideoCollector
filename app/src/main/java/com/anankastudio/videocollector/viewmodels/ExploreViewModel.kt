@@ -11,6 +11,7 @@ import com.anankastudio.videocollector.models.item.ContentVideo
 import com.anankastudio.videocollector.repository.VideoRepository
 import com.anankastudio.videocollector.utilities.Constants
 import com.anankastudio.videocollector.utilities.Result
+import com.anankastudio.videocollector.utilities.SharedPreferencesManager
 import com.anankastudio.videocollector.utilities.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -20,7 +21,8 @@ import kotlin.math.ceil
 @HiltViewModel
 class ExploreViewModel @Inject constructor(
     private val videoRepository: VideoRepository,
-    private val utils: Utils
+    private val utils: Utils,
+    private val sharedPreferencesManager: SharedPreferencesManager
 ) : ViewModel() {
 
     var page = 1
@@ -68,7 +70,9 @@ class ExploreViewModel @Inject constructor(
         if (page > 1) loadingMore.value = true else loading.value = true
         viewModelScope.launch {
             try {
-                when(val result = videoRepository.fetchSearchVideo(page, query)) {
+                val orientation = sharedPreferencesManager.getString(SharedPreferencesManager.FILTER_ORIENTATION)
+                val size = sharedPreferencesManager.getString(SharedPreferencesManager.FILTER_SIZE)
+                when(val result = videoRepository.fetchSearchVideo(page, query, orientation, size)) {
                     is Result.Success -> {
                         val data = result.data
                         val perPage = data.perPage ?: 15
@@ -115,5 +119,11 @@ class ExploreViewModel @Inject constructor(
 
     fun hideKeyboard(activity: Activity) {
         utils.hideKeyboard(activity)
+    }
+
+    fun isFilterExist(): Boolean {
+        val orientation = sharedPreferencesManager.getString(SharedPreferencesManager.FILTER_ORIENTATION)
+        val size = sharedPreferencesManager.getString(SharedPreferencesManager.FILTER_SIZE)
+        return orientation != "" || size != ""
     }
 }
