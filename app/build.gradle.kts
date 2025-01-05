@@ -60,6 +60,7 @@ dependencies {
     implementation(libs.retrofit.converter.gson)
     implementation(libs.swiperefreshlayout)
     implementation(libs.glide)
+    implementation(libs.shimmer)
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     implementation(libs.hilt.android)
