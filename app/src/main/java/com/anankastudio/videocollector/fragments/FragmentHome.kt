@@ -1,5 +1,6 @@
 package com.anankastudio.videocollector.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,8 +10,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.anankastudio.videocollector.R
+import com.anankastudio.videocollector.activities.DetailVideoActivity
 import com.anankastudio.videocollector.adapters.VideoAdapter
 import com.anankastudio.videocollector.databinding.FragmentHomeBinding
+import com.anankastudio.videocollector.interfaces.OnClickVideo
 import com.anankastudio.videocollector.utilities.SpaceItemDecoration
 import com.anankastudio.videocollector.viewmodels.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -48,6 +51,7 @@ class FragmentHome : Fragment() {
     private fun setupListVideo() {
         binding.rvVideo.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         binding.rvVideo.adapter = videoAdapter
+        videoAdapter.onClickVideo = onClickVideo
         val space = resources.getDimensionPixelSize(R.dimen.item_spacing_video)
         binding.rvVideo.addItemDecoration(SpaceItemDecoration(space))
     }
@@ -77,6 +81,14 @@ class FragmentHome : Fragment() {
         }
     }
 
+    private val onClickVideo = object : OnClickVideo {
+        override fun onClickDetail(id: Long) {
+            val intent = Intent(requireContext(), DetailVideoActivity::class.java)
+            intent.putExtra(EXTRA_ID_VIDEO, id)
+            startActivity(intent)
+        }
+    }
+
     private fun checkScrollVideoList() {
         binding.rvVideo.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -101,5 +113,9 @@ class FragmentHome : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        const val EXTRA_ID_VIDEO = "extra_id_video"
     }
 }

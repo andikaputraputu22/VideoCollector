@@ -1,11 +1,13 @@
 package com.anankastudio.videocollector.repository
 
 import com.anankastudio.videocollector.api.ApiService
-import com.anankastudio.videocollector.models.Collection
+import com.anankastudio.videocollector.database.DetailVideoDao
 import com.anankastudio.videocollector.models.FeaturedCollectionResponse
 import com.anankastudio.videocollector.models.PopularResponse
+import com.anankastudio.videocollector.models.Video
 import com.anankastudio.videocollector.models.item.ContentCollection
 import com.anankastudio.videocollector.models.item.DataContentCollection
+import com.anankastudio.videocollector.models.room.DetailVideo
 import com.anankastudio.videocollector.utilities.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -14,7 +16,8 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class VideoRepository @Inject constructor(
-    private val apiService: ApiService
+    private val apiService: ApiService,
+    private val detailVideoDao: DetailVideoDao
 ) {
 
     suspend fun fetchPopularVideo(page: Int): Result<PopularResponse> = withContext(Dispatchers.IO) {
@@ -119,6 +122,58 @@ class VideoRepository @Inject constructor(
             Result.Success(finalData)
         } catch (e: Exception) {
             Result.Error("Empty collection")
+        }
+    }
+
+    suspend fun fetchDetailVideo(id: Long): Result<DetailVideo?> = withContext(Dispatchers.IO) {
+        try {
+            val cachedVideo = detailVideoDao.getVideoById(id)
+            if (cachedVideo != null) {
+                val currentTime = System.currentTimeMillis()
+                val timeDifference = currentTime - cachedVideo.timestamp
+                val interval = 600000
+
+                if (timeDifference < interval) {
+                    return@withContext Result.Success(cachedVideo)
+                }
+            }
+
+            val response = apiService.getDetailVideo(id.toString())
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    saveVideoToDatabase(it)
+                    val updatedVideo = detailVideoDao.getVideoById(id)
+                    return@withContext Result.Success(updatedVideo)
+                }
+                cachedVideo?.let {
+                    Result.Success(it)
+                } ?: Result.Error("Response body is null and no cache data available")
+            } else {
+                cachedVideo?.let {
+                    Result.Success(it)
+                } ?: Result.Error("Failed to fetch data: ${response.code()}")
+            }
+        } catch (e: Exception) {
+            Result.Error("Exception occurred: ${e.message}")
+        }
+    }
+
+    private suspend fun saveVideoToDatabase(data: Video) {
+        data.id?.let {
+            detailVideoDao.deleteVideo(it)
+            val video = DetailVideo(
+                id = it,
+                width = data.width,
+                height = data.height,
+                duration = data.duration,
+                url = data.url,
+                image = data.image,
+                userName = data.user?.name,
+                userUrl = data.user?.url,
+                videoFiles = data.videoFiles,
+                timestamp = System.currentTimeMillis()
+            )
+            detailVideoDao.insertVideo(video)
         }
     }
 }

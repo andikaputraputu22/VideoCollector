@@ -4,12 +4,14 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import androidx.recyclerview.widget.RecyclerView
 import com.anankastudio.videocollector.databinding.ItemVideoBinding
+import com.anankastudio.videocollector.interfaces.OnClickVideo
 import com.anankastudio.videocollector.models.Video
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.Target
 
 class ItemVideo(
-    private val binding: ItemVideoBinding
+    private val binding: ItemVideoBinding,
+    private val onClickVideo: OnClickVideo
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: Video) {
@@ -32,5 +34,9 @@ class ItemVideo(
             .override(Target.SIZE_ORIGINAL)
             .placeholder(ColorDrawable(Color.GRAY))
             .into(binding.coverVideo)
+
+        itemView.setOnClickListener {
+            onClickVideo.onClickDetail(item.id ?: 0L)
+        }
     }
 }

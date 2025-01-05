@@ -4,18 +4,20 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.anankastudio.videocollector.databinding.ItemVideoBinding
+import com.anankastudio.videocollector.interfaces.OnClickVideo
 import com.anankastudio.videocollector.models.Video
 import com.anankastudio.videocollector.viewholders.ItemVideo
 
 class VideoAdapter : RecyclerView.Adapter<ItemVideo>() {
 
     private var listVideo: MutableList<Video> = mutableListOf()
+    lateinit var onClickVideo: OnClickVideo
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemVideo {
         val binding = ItemVideoBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
         )
-        return ItemVideo(binding)
+        return ItemVideo(binding, onClickVideo)
     }
 
     override fun getItemCount() = listVideo.size

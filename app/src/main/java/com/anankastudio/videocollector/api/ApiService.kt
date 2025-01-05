@@ -3,6 +3,7 @@ package com.anankastudio.videocollector.api
 import com.anankastudio.videocollector.models.CollectionResponse
 import com.anankastudio.videocollector.models.FeaturedCollectionResponse
 import com.anankastudio.videocollector.models.PopularResponse
+import com.anankastudio.videocollector.models.Video
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -35,4 +36,9 @@ interface ApiService {
         @Query("type") type: String,
         @Query("sort") sort: String
     ): Response<CollectionResponse>
+
+    @GET("videos/videos/{id}")
+    suspend fun getDetailVideo(
+        @Path("id") id: String
+    ): Response<Video>
 }
