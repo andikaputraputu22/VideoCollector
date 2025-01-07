@@ -10,9 +10,12 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.anankastudio.videocollector.R
+import com.anankastudio.videocollector.adapters.DetailVideoAdapter
 import com.anankastudio.videocollector.databinding.ActivityDetailVideoBinding
 import com.anankastudio.videocollector.fragments.FragmentHome
+import com.anankastudio.videocollector.utilities.VideoPlayerManager
 import com.anankastudio.videocollector.viewmodels.DetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -23,6 +26,8 @@ class DetailVideoActivity : AppCompatActivity() {
     private val viewModel: DetailViewModel by viewModels()
     private var idVideo = 0L
     private var shimmerAnimation: Animation? = null
+    private var videoPlayerManager: VideoPlayerManager? = null
+    private lateinit var adapter: DetailVideoAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +38,7 @@ class DetailVideoActivity : AppCompatActivity() {
         idVideo = intent.getLongExtra(FragmentHome.EXTRA_ID_VIDEO, 0L)
 
         setupStatusBar()
+        setupListDetail()
         observeData()
         viewModel.getDetailVideo(idVideo)
     }
@@ -58,6 +64,13 @@ class DetailVideoActivity : AppCompatActivity() {
         }
     }
 
+    private fun setupListDetail() {
+        videoPlayerManager = VideoPlayerManager(this)
+        adapter = DetailVideoAdapter(videoPlayerManager)
+        binding.rvDetail.layoutManager = LinearLayoutManager(this)
+        binding.rvDetail.adapter = adapter
+    }
+
     private fun observeData() {
         viewModel.loading.observe(this) {
             if (it) {
@@ -69,6 +82,10 @@ class DetailVideoActivity : AppCompatActivity() {
                 binding.shimmerContainer.visibility = View.GONE
                 binding.shimmerContainer.clearAnimation()
             }
+        }
+
+        viewModel.listContent.observe(this) {
+            adapter.setData(it)
         }
     }
 }
