@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.anankastudio.videocollector.interfaces.DetailPage
-import com.anankastudio.videocollector.models.VideoFile
+import com.anankastudio.videocollector.models.item.ContentDetailPreviewVideo
 import com.anankastudio.videocollector.models.item.ContentDetailVideo
 import com.anankastudio.videocollector.models.room.DetailVideo
 import com.anankastudio.videocollector.repository.VideoRepository
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DetailViewModel @Inject constructor(
-    private val videoRepository: VideoRepository
+    private val videoRepository: VideoRepository,
 ) : ViewModel() {
 
     private val contents: MutableList<DetailPage> = mutableListOf()
@@ -48,6 +48,7 @@ class DetailViewModel @Inject constructor(
         contents.clear()
         data?.let {
             setVideo(contents, it)
+            setPreviewVideo(contents, it)
         }
         _listContent.postValue(contents)
     }
@@ -57,12 +58,20 @@ class DetailViewModel @Inject constructor(
         data: DetailVideo
     ) {
         val contentDetailVideo = ContentDetailVideo(
-            item = getLargestVideoFile(data.videoFiles)
+            item = videoRepository.getBestVideoForDevice(data.videoFiles)
         )
         contents.add(contentDetailVideo)
     }
 
-    private fun getLargestVideoFile(videoFiles: List<VideoFile>?): VideoFile? {
-        return videoFiles?.maxByOrNull { it.size ?: 0 }
+    private fun setPreviewVideo(
+        contents: MutableList<DetailPage>,
+        data: DetailVideo
+    ) {
+        val contentDetailPreviewVideo = ContentDetailPreviewVideo(
+            width = data.width,
+            height = data.height,
+            items = data.videoPictures
+        )
+        contents.add(contentDetailPreviewVideo)
     }
 }

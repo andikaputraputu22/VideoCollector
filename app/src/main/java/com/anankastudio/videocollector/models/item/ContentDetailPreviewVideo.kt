@@ -4,5 +4,7 @@ import com.anankastudio.videocollector.interfaces.DetailPage
 import com.anankastudio.videocollector.models.VideoPicture
 
 data class ContentDetailPreviewVideo(
+    var width: Int? = null,
+    var height: Int? = null,
     var items: List<VideoPicture>? = null
 ) : DetailPage

@@ -39,6 +39,7 @@ class DetailVideoActivity : AppCompatActivity() {
 
         setupStatusBar()
         setupListDetail()
+        setupClickListener()
         observeData()
         viewModel.getDetailVideo(idVideo)
     }
@@ -61,6 +62,12 @@ class DetailVideoActivity : AppCompatActivity() {
                 windowInsetsController.isAppearanceLightStatusBars = false
                 windowInsetsController.isAppearanceLightNavigationBars = false
             }
+        }
+    }
+
+    private fun setupClickListener() {
+        binding.back.setOnClickListener {
+            finish()
         }
     }
 
@@ -87,5 +94,20 @@ class DetailVideoActivity : AppCompatActivity() {
         viewModel.listContent.observe(this) {
             adapter.setData(it)
         }
+    }
+
+    private fun manageVideoPlayback(action: (VideoPlayerManager?) -> Unit) {
+        action(videoPlayerManager)
+    }
+
+    private fun releaseVideo() {
+        manageVideoPlayback {
+            it?.pause()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        releaseVideo()
     }
 }

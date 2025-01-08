@@ -20,10 +20,12 @@ object AppModule {
     @Singleton
     @Provides
     fun provideVideoRepository(
+        @ApplicationContext context: Context,
         apiService: ApiService,
-        detailVideoDao: DetailVideoDao
+        detailVideoDao: DetailVideoDao,
+        utils: Utils
     ): VideoRepository {
-        return VideoRepository(apiService, detailVideoDao)
+        return VideoRepository(context,apiService, detailVideoDao, utils)
     }
 
     @Singleton
