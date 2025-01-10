@@ -34,7 +34,7 @@ class ItemDetailPreviewVideoContainer(
                 false
             )
             binding.rvPreviewVideo.adapter = adapter
-            val space = itemView.resources.getDimensionPixelSize(R.dimen.item_spacing_video)
+            val space = itemView.resources.getDimensionPixelSize(R.dimen.item_spacing_preview_video)
             clearItemDecorations(binding.rvPreviewVideo)
             binding.rvPreviewVideo.addItemDecoration(SpaceItemDecoration(space))
             data.items?.let { adapter.setData(it, data.width ?: 16, data.height ?: 9) }
