@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.anankastudio.videocollector.interfaces.DetailPage
-import com.anankastudio.videocollector.models.item.ContentDetailPreviewVideo
 import com.anankastudio.videocollector.models.item.ContentDetailVideo
 import com.anankastudio.videocollector.models.room.DetailVideo
 import com.anankastudio.videocollector.repository.VideoRepository
@@ -25,6 +24,9 @@ class DetailViewModel @Inject constructor(
     private val _listContent = MutableLiveData<MutableList<DetailPage>>()
     val listContent: LiveData<MutableList<DetailPage>> = _listContent
 
+    private val _title = MutableLiveData<String>()
+    val title: LiveData<String> = _title
+
     fun getDetailVideo(id: Long) {
         loading.value = true
         viewModelScope.launch {
@@ -32,6 +34,7 @@ class DetailViewModel @Inject constructor(
                 when(val result = videoRepository.fetchDetailVideo(id)) {
                     is Result.Success -> {
                         val data = result.data
+                        _title.postValue(data?.userName ?: "")
                         setupContentDetail(data)
                     }
                     is Result.Error -> {
@@ -48,7 +51,6 @@ class DetailViewModel @Inject constructor(
         contents.clear()
         data?.let {
             setVideo(contents, it)
-            setPreviewVideo(contents, it)
         }
         _listContent.postValue(contents)
     }
@@ -61,17 +63,5 @@ class DetailViewModel @Inject constructor(
             item = videoRepository.getBestVideoForDevice(data.videoFiles)
         )
         contents.add(contentDetailVideo)
-    }
-
-    private fun setPreviewVideo(
-        contents: MutableList<DetailPage>,
-        data: DetailVideo
-    ) {
-        val contentDetailPreviewVideo = ContentDetailPreviewVideo(
-            width = data.width,
-            height = data.height,
-            items = data.videoPictures
-        )
-        contents.add(contentDetailPreviewVideo)
     }
 }

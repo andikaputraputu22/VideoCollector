@@ -91,6 +91,10 @@ class DetailVideoActivity : AppCompatActivity() {
             }
         }
 
+        viewModel.title.observe(this) {
+            binding.title.text = it
+        }
+
         viewModel.listContent.observe(this) {
             adapter.setData(it)
         }

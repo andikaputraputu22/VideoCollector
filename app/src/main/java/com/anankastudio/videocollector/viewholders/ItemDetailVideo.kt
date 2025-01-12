@@ -15,8 +15,8 @@ class ItemDetailVideo(
         val width = data.item?.width ?: 16
         val height = data.item?.height ?: 9
         val ratio = "$width:$height"
-        binding.playerContainer.layoutParams =
-            (binding.playerContainer.layoutParams as ConstraintLayout.LayoutParams)
+        binding.playerView.layoutParams =
+            (binding.playerView.layoutParams as ConstraintLayout.LayoutParams)
             .apply {
                 dimensionRatio = ratio
             }

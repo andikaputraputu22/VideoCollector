@@ -3,14 +3,11 @@ package com.anankastudio.videocollector.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.anankastudio.videocollector.databinding.ItemDetailPreviewVideoContainerBinding
 import com.anankastudio.videocollector.databinding.ItemDetailVideoBinding
 import com.anankastudio.videocollector.interfaces.DetailPage
-import com.anankastudio.videocollector.models.item.ContentDetailPreviewVideo
 import com.anankastudio.videocollector.models.item.ContentDetailVideo
 import com.anankastudio.videocollector.utilities.HolderDetailBind
 import com.anankastudio.videocollector.utilities.VideoPlayerManager
-import com.anankastudio.videocollector.viewholders.ItemDetailPreviewVideoContainer
 import com.anankastudio.videocollector.viewholders.ItemDetailVideo
 
 class DetailVideoAdapter(
@@ -26,12 +23,6 @@ class DetailVideoAdapter(
                     LayoutInflater.from(parent.context), parent, false
                 )
                 return ItemDetailVideo(binding, videoPlayerManager)
-            }
-            ITEM_PREVIEW_VIDEO -> {
-                val binding = ItemDetailPreviewVideoContainerBinding.inflate(
-                    LayoutInflater.from(parent.context), parent, false
-                )
-                return ItemDetailPreviewVideoContainer(binding)
             }
         }
         val binding = ItemDetailVideoBinding.inflate(
@@ -49,7 +40,6 @@ class DetailVideoAdapter(
     override fun getItemViewType(position: Int): Int {
         return when(listDetail[position]) {
             is ContentDetailVideo -> return ITEM_VIDEO
-            is ContentDetailPreviewVideo -> return ITEM_PREVIEW_VIDEO
             else -> ITEM_VIDEO
         }
     }
@@ -61,6 +51,5 @@ class DetailVideoAdapter(
 
     companion object {
         const val ITEM_VIDEO = 1
-        const val ITEM_PREVIEW_VIDEO = 2
     }
 }
