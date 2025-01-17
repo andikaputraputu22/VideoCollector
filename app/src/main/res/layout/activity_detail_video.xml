@@ -176,17 +176,33 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/rvDetail">
 
-            <androidx.appcompat.widget.AppCompatButton
+            <LinearLayout
+                android:id="@+id/actionDownload"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:layout_marginEnd="4dp"
                 android:layout_weight="0.6"
-                android:background="@drawable/bg_btn_download"
-                android:text="@string/download"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                android:textSize="14sp"
-                android:fontFamily="@font/montserrat_medium" />
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_btn_download">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginEnd="4dp"
+                    android:tint="@android:color/white"
+                    app:srcCompat="@drawable/ic_download" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/download"
+                    android:textSize="14sp"
+                    android:textColor="@android:color/white"
+                    android:fontFamily="@font/montserrat_medium" />
+
+            </LinearLayout>
 
             <androidx.appcompat.widget.AppCompatButton
                 android:layout_width="0dp"
