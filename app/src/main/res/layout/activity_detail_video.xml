@@ -169,6 +169,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginBottom="16dp"
+            android:baselineAligned="false"
             android:orientation="horizontal"
             android:weightSum="1"
             app:layout_constraintStart_toStartOf="parent"
@@ -187,8 +188,8 @@
                 android:background="@drawable/bg_btn_download">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
                     android:layout_marginEnd="4dp"
                     android:tint="@android:color/white"
                     app:srcCompat="@drawable/ic_download" />
@@ -204,17 +205,33 @@
 
             </LinearLayout>
 
-            <androidx.appcompat.widget.AppCompatButton
+            <LinearLayout
+                android:id="@+id/actionMore"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:layout_marginStart="4dp"
                 android:layout_weight="0.4"
-                android:background="@drawable/bg_btn_more"
-                android:text="@string/more"
-                android:textAllCaps="false"
-                android:textColor="@color/bg_color"
-                android:textSize="14sp"
-                android:fontFamily="@font/montserrat_medium" />
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_btn_more">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginEnd="4dp"
+                    android:tint="@color/bg_color"
+                    app:srcCompat="@drawable/ic_more_vertical" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/more"
+                    android:textSize="14sp"
+                    android:textColor="@color/bg_color"
+                    android:fontFamily="@font/montserrat_medium" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
