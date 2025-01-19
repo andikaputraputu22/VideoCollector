@@ -198,4 +198,12 @@ class VideoRepository @Inject constructor(
             videoFiles.minByOrNull { (it.width ?: 0) * (it.height ?: 0) }
         }
     }
+
+    fun getHighestVideo(
+        videoFiles: List<VideoFile>?
+    ): VideoFile? {
+        return videoFiles
+            ?.filter { it.size != null }
+            ?.maxByOrNull { it.size ?: 0L }
+    }
 }

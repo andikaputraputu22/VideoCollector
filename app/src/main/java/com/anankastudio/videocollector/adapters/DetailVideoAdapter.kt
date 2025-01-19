@@ -3,13 +3,16 @@ package com.anankastudio.videocollector.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.anankastudio.videocollector.databinding.ItemDetailInfoBinding
 import com.anankastudio.videocollector.databinding.ItemDetailProfileBinding
 import com.anankastudio.videocollector.databinding.ItemDetailVideoBinding
 import com.anankastudio.videocollector.interfaces.DetailPage
+import com.anankastudio.videocollector.models.item.ContentDetailInfo
 import com.anankastudio.videocollector.models.item.ContentDetailProfile
 import com.anankastudio.videocollector.models.item.ContentDetailVideo
 import com.anankastudio.videocollector.utilities.HolderDetailBind
 import com.anankastudio.videocollector.utilities.VideoPlayerManager
+import com.anankastudio.videocollector.viewholders.ItemDetailInfo
 import com.anankastudio.videocollector.viewholders.ItemDetailProfile
 import com.anankastudio.videocollector.viewholders.ItemDetailVideo
 
@@ -33,6 +36,12 @@ class DetailVideoAdapter(
                 )
                 return ItemDetailProfile(binding)
             }
+            ITEM_INFO -> {
+                val binding = ItemDetailInfoBinding.inflate(
+                    LayoutInflater.from(parent.context), parent, false
+                )
+                return ItemDetailInfo(binding)
+            }
         }
         val binding = ItemDetailVideoBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
@@ -50,6 +59,7 @@ class DetailVideoAdapter(
         return when(listDetail[position]) {
             is ContentDetailVideo -> return ITEM_VIDEO
             is ContentDetailProfile -> return ITEM_CREATOR
+            is ContentDetailInfo -> return ITEM_INFO
             else -> ITEM_VIDEO
         }
     }
@@ -62,5 +72,6 @@ class DetailVideoAdapter(
     companion object {
         const val ITEM_VIDEO = 1
         const val ITEM_CREATOR = 2
+        const val ITEM_INFO = 3
     }
 }

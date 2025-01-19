@@ -5,11 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.anankastudio.videocollector.interfaces.DetailPage
+import com.anankastudio.videocollector.models.item.ContentDetailInfo
 import com.anankastudio.videocollector.models.item.ContentDetailProfile
 import com.anankastudio.videocollector.models.item.ContentDetailVideo
 import com.anankastudio.videocollector.models.room.DetailVideo
 import com.anankastudio.videocollector.repository.VideoRepository
 import com.anankastudio.videocollector.utilities.Result
+import com.anankastudio.videocollector.utilities.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,6 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class DetailViewModel @Inject constructor(
     private val videoRepository: VideoRepository,
+    private val utils: Utils
 ) : ViewModel() {
 
     private val contents: MutableList<DetailPage> = mutableListOf()
@@ -53,6 +56,7 @@ class DetailViewModel @Inject constructor(
         data?.let {
             setVideo(contents, it)
             setCreator(contents, it)
+            setInfo(contents, it)
         }
         _listContent.postValue(contents)
     }
@@ -76,5 +80,19 @@ class DetailViewModel @Inject constructor(
             userUrl = data.userUrl
         )
         contents.add(contentDetailProfile)
+    }
+
+    private fun setInfo(
+        contents: MutableList<DetailPage>,
+        data: DetailVideo
+    ) {
+        val highestVideoFile = videoRepository.getHighestVideo(data.videoFiles)
+        val contentDetailInfo = ContentDetailInfo(
+            fileSize = highestVideoFile?.size?.let { utils.formatFileSize(it) },
+            fps = highestVideoFile?.fps?.let { utils.formatFPS(it, 0) },
+            duration = data.duration?.let { utils.formatDuration(it) },
+            videoFile = highestVideoFile
+        )
+        contents.add(contentDetailInfo)
     }
 }
