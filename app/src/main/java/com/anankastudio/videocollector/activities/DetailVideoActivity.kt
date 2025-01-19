@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.anankastudio.videocollector.R
 import com.anankastudio.videocollector.adapters.DetailVideoAdapter
 import com.anankastudio.videocollector.databinding.ActivityDetailVideoBinding
-import com.anankastudio.videocollector.fragments.FragmentHome
 import com.anankastudio.videocollector.utilities.VideoPlayerManager
 import com.anankastudio.videocollector.viewmodels.DetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,7 +34,7 @@ class DetailVideoActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         shimmerAnimation = AnimationUtils.loadAnimation(this, R.anim.shimmer_animation)
-        idVideo = intent.getLongExtra(FragmentHome.EXTRA_ID_VIDEO, 0L)
+        idVideo = intent.getLongExtra(EXTRA_ID_VIDEO, 0L)
 
         setupStatusBar()
         setupListDetail()
@@ -113,5 +112,9 @@ class DetailVideoActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         releaseVideo()
+    }
+
+    companion object {
+        const val EXTRA_ID_VIDEO = "extra_id_video"
     }
 }
