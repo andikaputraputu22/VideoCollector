@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.anankastudio.videocollector.interfaces.DetailPage
+import com.anankastudio.videocollector.models.item.ContentDetailProfile
 import com.anankastudio.videocollector.models.item.ContentDetailVideo
 import com.anankastudio.videocollector.models.room.DetailVideo
 import com.anankastudio.videocollector.repository.VideoRepository
@@ -51,6 +52,7 @@ class DetailViewModel @Inject constructor(
         contents.clear()
         data?.let {
             setVideo(contents, it)
+            setCreator(contents, it)
         }
         _listContent.postValue(contents)
     }
@@ -63,5 +65,16 @@ class DetailViewModel @Inject constructor(
             item = videoRepository.getBestVideoForDevice(data.videoFiles)
         )
         contents.add(contentDetailVideo)
+    }
+
+    private fun setCreator(
+        contents: MutableList<DetailPage>,
+        data: DetailVideo
+    ) {
+        val contentDetailProfile = ContentDetailProfile(
+            userName = data.userName,
+            userUrl = data.userUrl
+        )
+        contents.add(contentDetailProfile)
     }
 }

@@ -26,4 +26,6 @@
     <string name="preview_image_video">Preview Image Video</string>
     <string name="mini_preview">Mini Preview</string>
     <string name="download">Download</string>
+    <string name="share">Share</string>
+    <string name="view_creator_underline"><![CDATA[<u>View Creator</u>]]></string>
 </resources>
