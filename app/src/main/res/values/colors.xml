@@ -6,4 +6,5 @@
     <color name="bg_color">#130e26</color>
     <color name="indicator_color">#211939</color>
     <color name="line_color">#403a5e</color>
+    <color name="button_color">#e5e6e8</color>
 </resources>

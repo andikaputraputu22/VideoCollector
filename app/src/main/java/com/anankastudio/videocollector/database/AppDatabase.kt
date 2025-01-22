@@ -8,7 +8,7 @@ import androidx.room.TypeConverters
 import com.anankastudio.videocollector.models.room.DetailVideo
 
 @Database(entities = [DetailVideo::class], version = 1, exportSchema = false)
-@TypeConverters(VideoFileConverter::class)
+@TypeConverters(VideoFileConverter::class, VideoPictureConverter::class)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun detailVideoDao(): DetailVideoDao

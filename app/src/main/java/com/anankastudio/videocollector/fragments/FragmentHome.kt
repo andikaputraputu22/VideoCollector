@@ -84,7 +84,7 @@ class FragmentHome : Fragment() {
     private val onClickVideo = object : OnClickVideo {
         override fun onClickDetail(id: Long) {
             val intent = Intent(requireContext(), DetailVideoActivity::class.java)
-            intent.putExtra(EXTRA_ID_VIDEO, id)
+            intent.putExtra(DetailVideoActivity.EXTRA_ID_VIDEO, id)
             startActivity(intent)
         }
     }
@@ -113,9 +113,5 @@ class FragmentHome : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    companion object {
-        const val EXTRA_ID_VIDEO = "extra_id_video"
     }
 }

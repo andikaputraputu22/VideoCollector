@@ -5,6 +5,236 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/bg_color"
     tools:context=".activities.DetailVideoActivity">
+    
+    <LinearLayout
+        android:id="@+id/shimmerContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:background="@drawable/bg_shimmer" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_shimmer" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <View
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:background="@drawable/bg_shimmer" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:orientation="vertical">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="24dp"
+                    android:background="@drawable/bg_shimmer" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="24dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="68dp"
+                    android:background="@drawable/bg_shimmer" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_shimmer" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="68dp"
+            android:background="@drawable/bg_shimmer" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="86dp"
+            android:background="@drawable/bg_shimmer" />
+
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/contentContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:paddingHorizontal="16dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageButton
+                android:id="@+id/back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/back"
+                android:src="@drawable/ic_back"
+                app:tint="@android:color/white" />
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:fontFamily="@font/montserrat_medium"
+                tools:text="What happen to me?" />
+
+            <ImageButton
+                android:id="@+id/download"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/bg_btn_circle_outline"
+                android:contentDescription="@string/download"
+                android:src="@drawable/ic_download"
+                app:tint="@android:color/white" />
+
+            <ImageButton
+                android:id="@+id/favorite"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_btn_circle_outline"
+                android:contentDescription="@string/favorite"
+                android:src="@drawable/ic_favorite"
+                app:tint="@android:color/white" />
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvDetail"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/header"
+            app:layout_constraintBottom_toTopOf="@+id/actionContainer" />
+
+        <LinearLayout
+            android:id="@+id/actionContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="16dp"
+            android:baselineAligned="false"
+            android:orientation="horizontal"
+            android:weightSum="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rvDetail">
+
+            <LinearLayout
+                android:id="@+id/actionDownload"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="4dp"
+                android:layout_weight="0.6"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_btn_download">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginEnd="4dp"
+                    android:tint="@android:color/white"
+                    app:srcCompat="@drawable/ic_download" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/download"
+                    android:textSize="14sp"
+                    android:textColor="@android:color/white"
+                    android:fontFamily="@font/montserrat_medium" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/actionMore"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="4dp"
+                android:layout_weight="0.4"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_btn_more">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginEnd="4dp"
+                    android:tint="@color/bg_color"
+                    app:srcCompat="@drawable/ic_more_vertical" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/more"
+                    android:textSize="14sp"
+                    android:textColor="@color/bg_color"
+                    android:fontFamily="@font/montserrat_medium" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    
 </androidx.constraintlayout.widget.ConstraintLayout>

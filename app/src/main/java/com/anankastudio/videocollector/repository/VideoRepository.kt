@@ -1,14 +1,17 @@
 package com.anankastudio.videocollector.repository
 
+import android.content.Context
 import com.anankastudio.videocollector.api.ApiService
 import com.anankastudio.videocollector.database.DetailVideoDao
 import com.anankastudio.videocollector.models.FeaturedCollectionResponse
 import com.anankastudio.videocollector.models.PopularResponse
 import com.anankastudio.videocollector.models.Video
+import com.anankastudio.videocollector.models.VideoFile
 import com.anankastudio.videocollector.models.item.ContentCollection
 import com.anankastudio.videocollector.models.item.DataContentCollection
 import com.anankastudio.videocollector.models.room.DetailVideo
 import com.anankastudio.videocollector.utilities.Result
+import com.anankastudio.videocollector.utilities.Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -16,8 +19,10 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class VideoRepository @Inject constructor(
+    private val context: Context,
     private val apiService: ApiService,
-    private val detailVideoDao: DetailVideoDao
+    private val detailVideoDao: DetailVideoDao,
+    private val utils: Utils
 ) {
 
     suspend fun fetchPopularVideo(page: Int): Result<PopularResponse> = withContext(Dispatchers.IO) {
@@ -171,9 +176,34 @@ class VideoRepository @Inject constructor(
                 userName = data.user?.name,
                 userUrl = data.user?.url,
                 videoFiles = data.videoFiles,
+                videoPictures = data.videoPictures,
                 timestamp = System.currentTimeMillis()
             )
             detailVideoDao.insertVideo(video)
         }
+    }
+
+    fun getBestVideoForDevice(
+        videoFiles: List<VideoFile>?
+    ): VideoFile? {
+        if (videoFiles.isNullOrEmpty()) return null
+        val (deviceWidth, deviceHeight) = utils.getDeviceResolution(context)
+        val suitableVideos = videoFiles.filter {
+            (it.width ?: 0) <= deviceWidth && (it.height ?: 0) <= deviceHeight
+        }
+
+        return if (suitableVideos.isNotEmpty()) {
+            suitableVideos.maxByOrNull { (it.width ?: 0) * (it.height ?: 0) }
+        } else {
+            videoFiles.minByOrNull { (it.width ?: 0) * (it.height ?: 0) }
+        }
+    }
+
+    fun getHighestVideo(
+        videoFiles: List<VideoFile>?
+    ): VideoFile? {
+        return videoFiles
+            ?.filter { it.size != null }
+            ?.maxByOrNull { it.size ?: 0L }
     }
 }

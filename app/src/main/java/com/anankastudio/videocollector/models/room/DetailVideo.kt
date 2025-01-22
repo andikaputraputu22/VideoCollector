@@ -3,6 +3,7 @@ package com.anankastudio.videocollector.models.room
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.anankastudio.videocollector.models.VideoFile
+import com.anankastudio.videocollector.models.VideoPicture
 
 @Entity(tableName = "detail_video")
 data class DetailVideo(
@@ -16,5 +17,6 @@ data class DetailVideo(
     val userName: String? = null,
     val userUrl: String? = null,
     val videoFiles: List<VideoFile>? = null,
+    val videoPictures: List<VideoPicture>? = null,
     val timestamp: Long
 )

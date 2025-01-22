@@ -1,6 +1,7 @@
 package com.anankastudio.videocollector.fragments
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.Editable
@@ -17,10 +18,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.anankastudio.videocollector.R
+import com.anankastudio.videocollector.activities.DetailVideoActivity
 import com.anankastudio.videocollector.adapters.ExploreAdapter
 import com.anankastudio.videocollector.bottomsheet.FilterBottomSheet
 import com.anankastudio.videocollector.databinding.FragmentExploreBinding
 import com.anankastudio.videocollector.interfaces.OnClickFilter
+import com.anankastudio.videocollector.interfaces.OnClickVideo
 import com.anankastudio.videocollector.utilities.Constants
 import com.anankastudio.videocollector.utilities.SpaceItemDecoration
 import com.anankastudio.videocollector.viewmodels.ExploreViewModel
@@ -143,6 +146,7 @@ class FragmentExplore : Fragment(), OnClickFilter {
     private fun setupListVideo() {
         updateRecyclerViewLayout()
         binding.rvVideo.adapter = exploreAdapter
+        exploreAdapter.onClickVideo = onClickVideo
     }
 
     private fun updateRecyclerViewLayout() {
@@ -171,6 +175,14 @@ class FragmentExplore : Fragment(), OnClickFilter {
         exploreAdapter.clear()
         viewModel.page = 1
         viewModel.pageTotal = 1
+    }
+
+    private val onClickVideo = object : OnClickVideo {
+        override fun onClickDetail(id: Long) {
+            val intent = Intent(requireContext(), DetailVideoActivity::class.java)
+            intent.putExtra(DetailVideoActivity.EXTRA_ID_VIDEO, id)
+            startActivity(intent)
+        }
     }
 
     private fun firstLoadVideo() {

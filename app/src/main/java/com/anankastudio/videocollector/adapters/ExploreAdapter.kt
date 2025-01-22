@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.anankastudio.videocollector.databinding.ItemCollectionContainerBinding
 import com.anankastudio.videocollector.databinding.ItemVideoBinding
 import com.anankastudio.videocollector.interfaces.ExplorePage
+import com.anankastudio.videocollector.interfaces.OnClickVideo
 import com.anankastudio.videocollector.models.item.ContentCollection
 import com.anankastudio.videocollector.models.item.ContentVideo
 import com.anankastudio.videocollector.viewholders.ItemContentCollection
@@ -14,6 +15,7 @@ import com.anankastudio.videocollector.viewholders.ItemContentVideo
 class ExploreAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var listVideo: MutableList<ExplorePage> = mutableListOf()
+    lateinit var onClickVideo: OnClickVideo
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         when(viewType) {
@@ -21,7 +23,7 @@ class ExploreAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 val binding = ItemVideoBinding.inflate(
                     LayoutInflater.from(parent.context), parent, false
                 )
-                return ItemContentVideo(binding)
+                return ItemContentVideo(binding, onClickVideo)
             }
             CONTENT_COLLECTION -> {
                 val binding = ItemCollectionContainerBinding.inflate(
@@ -33,7 +35,7 @@ class ExploreAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         val binding = ItemVideoBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
         )
-        return ItemContentVideo(binding)
+        return ItemContentVideo(binding, onClickVideo)
     }
 
     override fun getItemCount() = listVideo.size
