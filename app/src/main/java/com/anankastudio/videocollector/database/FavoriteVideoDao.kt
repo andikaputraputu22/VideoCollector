@@ -20,4 +20,7 @@ interface FavoriteVideoDao {
 
     @Query("DELETE FROM favorite_video WHERE id = :id")
     suspend fun deleteFavoriteVideo(id: Long)
+
+    @Query("DELETE FROM favorite_video")
+    suspend fun deleteAllFavoriteVideo()
 }

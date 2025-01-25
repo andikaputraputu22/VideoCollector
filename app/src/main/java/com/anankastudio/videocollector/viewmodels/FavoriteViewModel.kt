@@ -31,4 +31,13 @@ class FavoriteViewModel @Inject constructor(
             }
         }
     }
+
+    fun deleteAllFavoriteVideo() {
+        viewModelScope.launch {
+            try {
+                videoRepository.deleteAllFavoriteVideo()
+            } catch (_: Exception) {}
+            getAllFavoriteVideo()
+        }
+    }
 }

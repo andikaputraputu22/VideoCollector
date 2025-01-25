@@ -208,6 +208,10 @@ class VideoRepository @Inject constructor(
         favoriteVideoDao.deleteFavoriteVideo(id)
     }
 
+    suspend fun deleteAllFavoriteVideo() {
+        favoriteVideoDao.deleteAllFavoriteVideo()
+    }
+
     suspend fun isVideoExists(id: Long): Boolean {
         return favoriteVideoDao.isVideoExists(id)
     }
