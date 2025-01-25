@@ -10,8 +10,14 @@ import com.anankastudio.videocollector.models.room.FavoriteVideo
 interface FavoriteVideoDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertVideo(favoriteVideo: FavoriteVideo)
+    suspend fun insertFavoriteVideo(favoriteVideo: FavoriteVideo)
+
+    @Query("SELECT * FROM favorite_video ORDER BY timestamp DESC")
+    suspend fun getAllFavoriteVideo(): List<FavoriteVideo>
 
     @Query("SELECT EXISTS(SELECT 1 FROM favorite_video WHERE id = :id)")
     suspend fun isVideoExists(id: Long): Boolean
+
+    @Query("DELETE FROM favorite_video WHERE id = :id")
+    suspend fun deleteFavoriteVideo(id: Long)
 }

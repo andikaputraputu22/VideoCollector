@@ -28,4 +28,6 @@
     <string name="download">Download</string>
     <string name="share">Share</string>
     <string name="view_creator_underline"><![CDATA[<u>View Creator</u>]]></string>
+    <string name="my_favorites">My Favorites</string>
+    <string name="delete">Delete</string>
 </resources>

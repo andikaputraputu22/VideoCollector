@@ -11,6 +11,7 @@ import com.anankastudio.videocollector.models.VideoFile
 import com.anankastudio.videocollector.models.item.ContentCollection
 import com.anankastudio.videocollector.models.item.DataContentCollection
 import com.anankastudio.videocollector.models.room.DetailVideo
+import com.anankastudio.videocollector.models.room.FavoriteVideo
 import com.anankastudio.videocollector.utilities.Result
 import com.anankastudio.videocollector.utilities.Utils
 import kotlinx.coroutines.Dispatchers
@@ -165,6 +166,10 @@ class VideoRepository @Inject constructor(
         }
     }
 
+    suspend fun fetchAllFavoriteVideo(): List<FavoriteVideo> {
+        return favoriteVideoDao.getAllFavoriteVideo()
+    }
+
     private suspend fun saveVideoToDatabase(data: Video) {
         data.id?.let {
             detailVideoDao.deleteVideo(it)
@@ -183,6 +188,24 @@ class VideoRepository @Inject constructor(
             )
             detailVideoDao.insertVideo(video)
         }
+    }
+
+    suspend fun saveVideoToFavorite(data: DetailVideo?) {
+        data?.let {
+            favoriteVideoDao.deleteFavoriteVideo(it.id)
+            val favoriteVideo = FavoriteVideo(
+                id = it.id,
+                width = it.width,
+                height = it.height,
+                image = it.image,
+                timestamp = System.currentTimeMillis()
+            )
+            favoriteVideoDao.insertFavoriteVideo(favoriteVideo)
+        }
+    }
+
+    suspend fun deleteVideoFromFavorite(id: Long) {
+        favoriteVideoDao.deleteFavoriteVideo(id)
     }
 
     suspend fun isVideoExists(id: Long): Boolean {
