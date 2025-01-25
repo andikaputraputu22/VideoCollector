@@ -3,6 +3,7 @@ package com.anankastudio.videocollector.repository
 import android.content.Context
 import com.anankastudio.videocollector.api.ApiService
 import com.anankastudio.videocollector.database.DetailVideoDao
+import com.anankastudio.videocollector.database.FavoriteVideoDao
 import com.anankastudio.videocollector.models.FeaturedCollectionResponse
 import com.anankastudio.videocollector.models.PopularResponse
 import com.anankastudio.videocollector.models.Video
@@ -22,6 +23,7 @@ class VideoRepository @Inject constructor(
     private val context: Context,
     private val apiService: ApiService,
     private val detailVideoDao: DetailVideoDao,
+    private val favoriteVideoDao: FavoriteVideoDao,
     private val utils: Utils
 ) {
 
@@ -181,6 +183,10 @@ class VideoRepository @Inject constructor(
             )
             detailVideoDao.insertVideo(video)
         }
+    }
+
+    suspend fun isVideoExists(id: Long): Boolean {
+        return favoriteVideoDao.isVideoExists(id)
     }
 
     fun getBestVideoForDevice(
