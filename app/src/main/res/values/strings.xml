@@ -34,4 +34,5 @@
     <string name="description_delete_favorites">Are you sure want to delete all your favorite videos?</string>
     <string name="yes">Yes</string>
     <string name="cancel">Cancel</string>
+    <string name="data_not_found">Data not found</string>
 </resources>

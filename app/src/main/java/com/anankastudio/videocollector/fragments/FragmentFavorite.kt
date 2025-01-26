@@ -82,6 +82,7 @@ class FragmentFavorite : Fragment(), OnClickConfirm {
 
         viewModel.isDataAvailable.observe(viewLifecycleOwner) {
             binding.delete.visibility = if (it) View.VISIBLE else View.GONE
+            binding.notFoundContainer.visibility = if (it) View.GONE else View.VISIBLE
         }
     }
 
