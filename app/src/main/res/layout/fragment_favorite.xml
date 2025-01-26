@@ -30,6 +30,7 @@
             android:id="@+id/delete"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:visibility="gone"
             android:contentDescription="@string/delete"
             android:background="@drawable/bg_btn_circle_outline"
             android:src="@drawable/ic_delete"

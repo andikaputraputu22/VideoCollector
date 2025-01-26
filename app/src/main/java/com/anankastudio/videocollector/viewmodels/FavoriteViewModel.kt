@@ -16,6 +16,7 @@ class FavoriteViewModel @Inject constructor(
 ) : ViewModel() {
 
     val loading by lazy { MutableLiveData<Boolean>() }
+    val isDataAvailable by lazy { MutableLiveData<Boolean>() }
 
     private val _listFavoriteVideo = MutableLiveData<List<FavoriteVideo>?>()
     val listFavoriteVideo: LiveData<List<FavoriteVideo>?> = _listFavoriteVideo
@@ -25,8 +26,12 @@ class FavoriteViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val data = videoRepository.fetchAllFavoriteVideo()
+                isDataAvailable.value = data.isNotEmpty()
                 _listFavoriteVideo.postValue(data)
-            } finally {
+            } catch (e: Exception) {
+                isDataAvailable.value = false
+            }
+            finally {
                 loading.value = false
             }
         }
