@@ -1,5 +1,6 @@
 package com.anankastudio.videocollector.models
 
+import com.anankastudio.videocollector.interfaces.VideoList
 import com.google.gson.annotations.SerializedName
 
 data class Video(
@@ -15,4 +16,4 @@ data class Video(
     val videoFiles: List<VideoFile>,
     @SerializedName("video_pictures")
     val videoPictures: List<VideoPicture>
-)
+) : VideoList

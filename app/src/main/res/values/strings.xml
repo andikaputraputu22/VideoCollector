@@ -28,4 +28,11 @@
     <string name="download">Download</string>
     <string name="share">Share</string>
     <string name="view_creator_underline"><![CDATA[<u>View Creator</u>]]></string>
+    <string name="my_favorites">My Favorites</string>
+    <string name="delete">Delete</string>
+    <string name="title_delete_favorites">Delete All Favorites?</string>
+    <string name="description_delete_favorites">Are you sure want to delete all your favorite videos?</string>
+    <string name="yes">Yes</string>
+    <string name="cancel">Cancel</string>
+    <string name="data_not_found">Data not found</string>
 </resources>

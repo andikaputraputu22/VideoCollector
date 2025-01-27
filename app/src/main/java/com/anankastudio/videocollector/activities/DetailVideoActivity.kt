@@ -68,6 +68,18 @@ class DetailVideoActivity : AppCompatActivity() {
         binding.back.setOnClickListener {
             finish()
         }
+
+        binding.favorite.setOnClickListener {
+            if (viewModel.onFavorite) {
+                viewModel.dataDetailVideo?.id?.let { data ->
+                    viewModel.deleteVideoFromFavorite(data)
+                }
+            } else {
+                viewModel.dataDetailVideo?.let { data ->
+                    viewModel.saveVideoToFavorite(data)
+                }
+            }
+        }
     }
 
     private fun setupListDetail() {
@@ -96,6 +108,13 @@ class DetailVideoActivity : AppCompatActivity() {
 
         viewModel.listContent.observe(this) {
             adapter.setData(it)
+        }
+
+        viewModel.isVideoOnFavorite.observe(this) {
+            binding.favorite.setImageResource(
+                if (it) R.drawable.ic_favorite_filled
+                else R.drawable.ic_favorite
+            )
         }
     }
 

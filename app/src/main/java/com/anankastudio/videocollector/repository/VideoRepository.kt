@@ -3,6 +3,7 @@ package com.anankastudio.videocollector.repository
 import android.content.Context
 import com.anankastudio.videocollector.api.ApiService
 import com.anankastudio.videocollector.database.DetailVideoDao
+import com.anankastudio.videocollector.database.FavoriteVideoDao
 import com.anankastudio.videocollector.models.FeaturedCollectionResponse
 import com.anankastudio.videocollector.models.PopularResponse
 import com.anankastudio.videocollector.models.Video
@@ -10,6 +11,7 @@ import com.anankastudio.videocollector.models.VideoFile
 import com.anankastudio.videocollector.models.item.ContentCollection
 import com.anankastudio.videocollector.models.item.DataContentCollection
 import com.anankastudio.videocollector.models.room.DetailVideo
+import com.anankastudio.videocollector.models.room.FavoriteVideo
 import com.anankastudio.videocollector.utilities.Result
 import com.anankastudio.videocollector.utilities.Utils
 import kotlinx.coroutines.Dispatchers
@@ -22,6 +24,7 @@ class VideoRepository @Inject constructor(
     private val context: Context,
     private val apiService: ApiService,
     private val detailVideoDao: DetailVideoDao,
+    private val favoriteVideoDao: FavoriteVideoDao,
     private val utils: Utils
 ) {
 
@@ -163,6 +166,10 @@ class VideoRepository @Inject constructor(
         }
     }
 
+    suspend fun fetchAllFavoriteVideo(): List<FavoriteVideo> {
+        return favoriteVideoDao.getAllFavoriteVideo()
+    }
+
     private suspend fun saveVideoToDatabase(data: Video) {
         data.id?.let {
             detailVideoDao.deleteVideo(it)
@@ -181,6 +188,32 @@ class VideoRepository @Inject constructor(
             )
             detailVideoDao.insertVideo(video)
         }
+    }
+
+    suspend fun saveVideoToFavorite(data: DetailVideo?) {
+        data?.let {
+            favoriteVideoDao.deleteFavoriteVideo(it.id)
+            val favoriteVideo = FavoriteVideo(
+                id = it.id,
+                width = it.width,
+                height = it.height,
+                image = it.image,
+                timestamp = System.currentTimeMillis()
+            )
+            favoriteVideoDao.insertFavoriteVideo(favoriteVideo)
+        }
+    }
+
+    suspend fun deleteVideoFromFavorite(id: Long) {
+        favoriteVideoDao.deleteFavoriteVideo(id)
+    }
+
+    suspend fun deleteAllFavoriteVideo() {
+        favoriteVideoDao.deleteAllFavoriteVideo()
+    }
+
+    suspend fun isVideoExists(id: Long): Boolean {
+        return favoriteVideoDao.isVideoExists(id)
     }
 
     fun getBestVideoForDevice(

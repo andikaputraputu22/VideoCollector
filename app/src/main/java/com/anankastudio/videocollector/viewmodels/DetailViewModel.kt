@@ -31,6 +31,12 @@ class DetailViewModel @Inject constructor(
     private val _title = MutableLiveData<String>()
     val title: LiveData<String> = _title
 
+    private val _isVideoOnFavorite = MutableLiveData<Boolean>()
+    val isVideoOnFavorite: LiveData<Boolean> = _isVideoOnFavorite
+
+    var dataDetailVideo: DetailVideo? = null
+    var onFavorite: Boolean = false
+
     fun getDetailVideo(id: Long) {
         loading.value = true
         viewModelScope.launch {
@@ -38,7 +44,9 @@ class DetailViewModel @Inject constructor(
                 when(val result = videoRepository.fetchDetailVideo(id)) {
                     is Result.Success -> {
                         val data = result.data
+                        dataDetailVideo = data
                         _title.postValue(data?.userName ?: "")
+                        data?.let { checkVideoOnFavorite(it.id) }
                         setupContentDetail(data)
                     }
                     is Result.Error -> {
@@ -48,6 +56,34 @@ class DetailViewModel @Inject constructor(
             } finally {
                 loading.value = false
             }
+        }
+    }
+
+    private suspend fun checkVideoOnFavorite(id: Long) {
+        if (videoRepository.isVideoExists(id)) {
+            _isVideoOnFavorite.postValue(true)
+            onFavorite = true
+        } else {
+            _isVideoOnFavorite.postValue(false)
+            onFavorite = false
+        }
+    }
+
+    fun saveVideoToFavorite(data: DetailVideo) {
+        viewModelScope.launch {
+            try {
+                videoRepository.saveVideoToFavorite(data)
+            } catch (_: Exception) {}
+            checkVideoOnFavorite(data.id)
+        }
+    }
+
+    fun deleteVideoFromFavorite(id: Long) {
+        viewModelScope.launch {
+            try {
+                videoRepository.deleteVideoFromFavorite(id)
+            } catch (_: Exception) {}
+            checkVideoOnFavorite(id)
         }
     }
 

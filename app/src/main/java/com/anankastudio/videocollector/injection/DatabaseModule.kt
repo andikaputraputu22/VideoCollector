@@ -3,6 +3,7 @@ package com.anankastudio.videocollector.injection
 import android.content.Context
 import com.anankastudio.videocollector.database.AppDatabase
 import com.anankastudio.videocollector.database.DetailVideoDao
+import com.anankastudio.videocollector.database.FavoriteVideoDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,5 +24,10 @@ object DatabaseModule {
     @Provides
     fun provideDetailVideoDao(database: AppDatabase): DetailVideoDao {
         return database.detailVideoDao()
+    }
+
+    @Provides
+    fun provideFavoriteVideoDao(database: AppDatabase): FavoriteVideoDao {
+        return database.favoriteVideoDao()
     }
 }
