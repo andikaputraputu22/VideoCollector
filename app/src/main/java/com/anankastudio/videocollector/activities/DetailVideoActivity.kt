@@ -6,6 +6,7 @@ import android.view.View
 import android.view.WindowInsetsController
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -13,13 +14,21 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.anankastudio.videocollector.R
 import com.anankastudio.videocollector.adapters.DetailVideoAdapter
+import com.anankastudio.videocollector.bottomsheet.DownloadBottomSheet
 import com.anankastudio.videocollector.databinding.ActivityDetailVideoBinding
+import com.anankastudio.videocollector.interfaces.OnClickDownload
+import com.anankastudio.videocollector.utilities.Utils
 import com.anankastudio.videocollector.utilities.VideoPlayerManager
 import com.anankastudio.videocollector.viewmodels.DetailViewModel
+import com.anankastudio.videocollector.viewmodels.ResultStatus
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class DetailVideoActivity : AppCompatActivity() {
+class DetailVideoActivity : AppCompatActivity(), OnClickDownload {
+
+    @Inject
+    lateinit var utils: Utils
 
     private lateinit var binding: ActivityDetailVideoBinding
     private val viewModel: DetailViewModel by viewModels()
@@ -27,6 +36,8 @@ class DetailVideoActivity : AppCompatActivity() {
     private var shimmerAnimation: Animation? = null
     private var videoPlayerManager: VideoPlayerManager? = null
     private lateinit var adapter: DetailVideoAdapter
+    private val downloadBottomSheet = DownloadBottomSheet()
+    private var urlDownload = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,6 +91,14 @@ class DetailVideoActivity : AppCompatActivity() {
                 }
             }
         }
+
+        binding.download.setOnClickListener {
+            showDownloadDialog()
+        }
+
+        binding.actionDownload.setOnClickListener {
+            showDownloadDialog()
+        }
     }
 
     private fun setupListDetail() {
@@ -87,6 +106,20 @@ class DetailVideoActivity : AppCompatActivity() {
         adapter = DetailVideoAdapter(videoPlayerManager)
         binding.rvDetail.layoutManager = LinearLayoutManager(this)
         binding.rvDetail.adapter = adapter
+    }
+
+    private fun showDownloadDialog() {
+        val bundle = Bundle()
+        bundle.putParcelableArrayList(
+            DownloadBottomSheet.ARG_VIDEO_LIST,
+            viewModel.dataDetailVideo?.videoFiles?.let { ArrayList(it) }
+        )
+        downloadBottomSheet.arguments = bundle
+        downloadBottomSheet.listener = this
+        downloadBottomSheet.show(
+            supportFragmentManager,
+            DownloadBottomSheet.TAG
+        )
     }
 
     private fun observeData() {
@@ -116,6 +149,17 @@ class DetailVideoActivity : AppCompatActivity() {
                 else R.drawable.ic_favorite
             )
         }
+
+        viewModel.downloadStatus.observe(this) {
+            when(it) {
+                is ResultStatus.Success -> {
+                    showToast(getString(R.string.download_video_success))
+                }
+                is ResultStatus.Error -> {
+                    showToast(getString(R.string.download_video_failed))
+                }
+            }
+        }
     }
 
     private fun manageVideoPlayback(action: (VideoPlayerManager?) -> Unit) {
@@ -126,6 +170,32 @@ class DetailVideoActivity : AppCompatActivity() {
         manageVideoPlayback {
             it?.pause()
         }
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(
+            this@DetailVideoActivity,
+            message,
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    override fun onClickDownload(url: String) {
+        urlDownload = url
+        utils.checkStoragePermission(this) {
+            viewModel.downloadVideo(this, urlDownload)
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        utils.handlePermissionResult(requestCode, grantResults, {
+            viewModel.downloadVideo(this, urlDownload)
+        }, this)
     }
 
     override fun onDestroy() {
