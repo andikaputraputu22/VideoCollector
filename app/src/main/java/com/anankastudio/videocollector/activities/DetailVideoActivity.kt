@@ -15,8 +15,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.anankastudio.videocollector.R
 import com.anankastudio.videocollector.adapters.DetailVideoAdapter
 import com.anankastudio.videocollector.bottomsheet.DownloadBottomSheet
+import com.anankastudio.videocollector.bottomsheet.MoreFeatureBottomSheet
 import com.anankastudio.videocollector.databinding.ActivityDetailVideoBinding
+import com.anankastudio.videocollector.interfaces.OnClickCreator
 import com.anankastudio.videocollector.interfaces.OnClickDownload
+import com.anankastudio.videocollector.interfaces.OnClickMoreFeature
+import com.anankastudio.videocollector.models.item.ContentDetailProfile
 import com.anankastudio.videocollector.utilities.Utils
 import com.anankastudio.videocollector.utilities.VideoPlayerManager
 import com.anankastudio.videocollector.viewmodels.DetailViewModel
@@ -25,7 +29,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class DetailVideoActivity : AppCompatActivity(), OnClickDownload {
+class DetailVideoActivity : AppCompatActivity(), OnClickDownload, OnClickMoreFeature {
 
     @Inject
     lateinit var utils: Utils
@@ -37,6 +41,7 @@ class DetailVideoActivity : AppCompatActivity(), OnClickDownload {
     private var videoPlayerManager: VideoPlayerManager? = null
     private lateinit var adapter: DetailVideoAdapter
     private val downloadBottomSheet = DownloadBottomSheet()
+    private val moreFeatureBottomSheet = MoreFeatureBottomSheet()
     private var urlDownload = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -99,6 +104,10 @@ class DetailVideoActivity : AppCompatActivity(), OnClickDownload {
         binding.actionDownload.setOnClickListener {
             showDownloadDialog()
         }
+
+        binding.actionMore.setOnClickListener {
+            showMoreFeatureDialog()
+        }
     }
 
     private fun setupListDetail() {
@@ -106,6 +115,7 @@ class DetailVideoActivity : AppCompatActivity(), OnClickDownload {
         adapter = DetailVideoAdapter(videoPlayerManager)
         binding.rvDetail.layoutManager = LinearLayoutManager(this)
         binding.rvDetail.adapter = adapter
+        adapter.onClickCreator = onClickCreator
     }
 
     private fun showDownloadDialog() {
@@ -119,6 +129,14 @@ class DetailVideoActivity : AppCompatActivity(), OnClickDownload {
         downloadBottomSheet.show(
             supportFragmentManager,
             DownloadBottomSheet.TAG
+        )
+    }
+
+    private fun showMoreFeatureDialog() {
+        moreFeatureBottomSheet.listener = this
+        moreFeatureBottomSheet.show(
+            supportFragmentManager,
+            MoreFeatureBottomSheet.TAG
         )
     }
 
@@ -162,6 +180,20 @@ class DetailVideoActivity : AppCompatActivity(), OnClickDownload {
         }
     }
 
+    private val onClickCreator = object : OnClickCreator {
+        override fun onClickShareCreator(creator: ContentDetailProfile?) {
+            creator?.userUrl?.let {
+                viewModel.shareContent(it, this@DetailVideoActivity)
+            }
+        }
+
+        override fun onClickViewCreator(creator: ContentDetailProfile?) {
+            creator?.userUrl?.let {
+                viewModel.showCreatorProfile(it, this@DetailVideoActivity)
+            }
+        }
+    }
+
     private fun manageVideoPlayback(action: (VideoPlayerManager?) -> Unit) {
         action(videoPlayerManager)
     }
@@ -180,10 +212,41 @@ class DetailVideoActivity : AppCompatActivity(), OnClickDownload {
         ).show()
     }
 
+    private fun downloadVideoForShare() {
+        val video = viewModel.dataDetailVideo?.videoFiles?.maxByOrNull { it.size ?: 0L }
+        video?.link?.let {
+            viewModel.downloadVideo(
+                this,
+                it,
+                true
+            )
+        }
+    }
+
     override fun onClickDownload(url: String) {
         urlDownload = url
         utils.checkStoragePermission(this) {
             viewModel.downloadVideo(this, urlDownload)
+        }
+    }
+
+    override fun onClickCopyLink() {
+        viewModel.dataDetailVideo?.url?.let {
+            viewModel.copyUrlVideo(it, this@DetailVideoActivity)
+            showToast(getString(R.string.url_copied))
+        }
+    }
+
+    override fun onClickShareLink() {
+        viewModel.dataDetailVideo?.url?.let {
+            viewModel.shareContent(it, this@DetailVideoActivity)
+        }
+    }
+
+    override fun onClickShareFileVideo() {
+        viewModel.onShareFileVideo = true
+        utils.checkStoragePermission(this) {
+            downloadVideoForShare()
         }
     }
 
@@ -194,7 +257,11 @@ class DetailVideoActivity : AppCompatActivity(), OnClickDownload {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         utils.handlePermissionResult(requestCode, grantResults, {
-            viewModel.downloadVideo(this, urlDownload)
+            if (viewModel.onShareFileVideo) {
+                downloadVideoForShare()
+            } else {
+                viewModel.downloadVideo(this, urlDownload)
+            }
         }, this)
     }
 

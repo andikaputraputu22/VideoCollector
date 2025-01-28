@@ -7,6 +7,7 @@ import com.anankastudio.videocollector.databinding.ItemDetailInfoBinding
 import com.anankastudio.videocollector.databinding.ItemDetailProfileBinding
 import com.anankastudio.videocollector.databinding.ItemDetailVideoBinding
 import com.anankastudio.videocollector.interfaces.DetailPage
+import com.anankastudio.videocollector.interfaces.OnClickCreator
 import com.anankastudio.videocollector.models.item.ContentDetailInfo
 import com.anankastudio.videocollector.models.item.ContentDetailProfile
 import com.anankastudio.videocollector.models.item.ContentDetailVideo
@@ -21,6 +22,7 @@ class DetailVideoAdapter(
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var listDetail: MutableList<DetailPage> = mutableListOf()
+    lateinit var onClickCreator: OnClickCreator
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         when(viewType) {
@@ -34,7 +36,7 @@ class DetailVideoAdapter(
                 val binding = ItemDetailProfileBinding.inflate(
                     LayoutInflater.from(parent.context), parent, false
                 )
-                return ItemDetailProfile(binding)
+                return ItemDetailProfile(binding, onClickCreator)
             }
             ITEM_INFO -> {
                 val binding = ItemDetailInfoBinding.inflate(
