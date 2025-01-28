@@ -4,6 +4,7 @@ import android.content.Context
 import com.anankastudio.videocollector.api.ApiService
 import com.anankastudio.videocollector.database.DetailVideoDao
 import com.anankastudio.videocollector.database.FavoriteVideoDao
+import com.anankastudio.videocollector.repository.MediaRepository
 import com.anankastudio.videocollector.repository.VideoRepository
 import com.anankastudio.videocollector.utilities.SharedPreferencesManager
 import com.anankastudio.videocollector.utilities.Utils
@@ -28,6 +29,12 @@ object AppModule {
         utils: Utils
     ): VideoRepository {
         return VideoRepository(context,apiService, detailVideoDao, favoriteVideoDao, utils)
+    }
+
+    @Singleton
+    @Provides
+    fun provideMediaRepository(): MediaRepository {
+        return MediaRepository()
     }
 
     @Singleton

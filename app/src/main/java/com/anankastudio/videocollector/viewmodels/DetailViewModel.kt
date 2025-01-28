@@ -1,5 +1,6 @@
 package com.anankastudio.videocollector.viewmodels
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,6 +10,7 @@ import com.anankastudio.videocollector.models.item.ContentDetailInfo
 import com.anankastudio.videocollector.models.item.ContentDetailProfile
 import com.anankastudio.videocollector.models.item.ContentDetailVideo
 import com.anankastudio.videocollector.models.room.DetailVideo
+import com.anankastudio.videocollector.repository.MediaRepository
 import com.anankastudio.videocollector.repository.VideoRepository
 import com.anankastudio.videocollector.utilities.Result
 import com.anankastudio.videocollector.utilities.Utils
@@ -19,6 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class DetailViewModel @Inject constructor(
     private val videoRepository: VideoRepository,
+    private val mediaRepository: MediaRepository,
     private val utils: Utils
 ) : ViewModel() {
 
@@ -33,6 +36,9 @@ class DetailViewModel @Inject constructor(
 
     private val _isVideoOnFavorite = MutableLiveData<Boolean>()
     val isVideoOnFavorite: LiveData<Boolean> = _isVideoOnFavorite
+
+    private val _downloadStatus = MutableLiveData<ResultStatus>()
+    val downloadStatus: LiveData<ResultStatus> = _downloadStatus
 
     var dataDetailVideo: DetailVideo? = null
     var onFavorite: Boolean = false
@@ -131,4 +137,17 @@ class DetailViewModel @Inject constructor(
         )
         contents.add(contentDetailInfo)
     }
+
+    fun downloadVideo(context: Context, url: String) {
+        mediaRepository.downloadVideo(context, url, onSuccess = {
+            _downloadStatus.postValue(ResultStatus.Success)
+        }, onError = { e ->
+            _downloadStatus.postValue(ResultStatus.Error(e))
+        })
+    }
+}
+
+sealed class ResultStatus {
+    data object Success: ResultStatus()
+    data class Error(val exception: Exception): ResultStatus()
 }

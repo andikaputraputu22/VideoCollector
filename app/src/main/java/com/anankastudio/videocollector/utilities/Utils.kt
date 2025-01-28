@@ -1,10 +1,17 @@
 package com.anankastudio.videocollector.utilities
 
+import android.Manifest
 import android.app.Activity
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.util.DisplayMetrics
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import com.anankastudio.videocollector.R
 import java.util.Locale
 
 class Utils {
@@ -52,6 +59,61 @@ class Utils {
             String.format(Locale.US, "%d.%02d Minutes", minutes, remainingSeconds)
         } else {
             "$seconds Seconds"
+        }
+    }
+
+    fun checkStoragePermission(activity: Activity, onGranted: () -> Unit) {
+        when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
+                if (ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_MEDIA_VIDEO)
+                    != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(
+                        activity,
+                        arrayOf(Manifest.permission.READ_MEDIA_VIDEO),
+                        Constants.STORAGE_PERMISSION_CODE
+                    )
+                } else {
+                    onGranted()
+                }
+            }
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
+                onGranted()
+            }
+            else -> {
+                val permissionsNeeded = mutableListOf<String>()
+                if (ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                    permissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+                }
+                if (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                    permissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                }
+                if (permissionsNeeded.isNotEmpty()) {
+                    ActivityCompat.requestPermissions(
+                        activity,
+                        permissionsNeeded.toTypedArray(),
+                        Constants.STORAGE_PERMISSION_CODE
+                    )
+                } else {
+                    onGranted()
+                }
+            }
+        }
+    }
+
+    fun handlePermissionResult(
+        requestCode: Int,
+        grantResults: IntArray,
+        onGranted: () -> Unit,
+        context: Context
+    ) {
+        if (requestCode == Constants.STORAGE_PERMISSION_CODE) {
+            if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                onGranted()
+            } else {
+                Toast.makeText(context, context.getString(R.string.alert_need_storage_permission), Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }
