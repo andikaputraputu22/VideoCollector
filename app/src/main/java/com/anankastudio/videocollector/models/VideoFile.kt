@@ -1,7 +1,10 @@
 package com.anankastudio.videocollector.models
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class VideoFile(
     val id: Long? = null,
     val quality: String? = null,
@@ -12,4 +15,4 @@ data class VideoFile(
     val fps: Double? = null,
     val link: String? = null,
     val size: Long? = null
-)
+) : Parcelable

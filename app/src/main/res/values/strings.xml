@@ -23,4 +23,24 @@
     <string name="large">Large</string>
     <string name="medium">Medium</string>
     <string name="small">Small</string>
+    <string name="preview_image_video">Preview Image Video</string>
+    <string name="mini_preview">Mini Preview</string>
+    <string name="download">Download</string>
+    <string name="share">Share</string>
+    <string name="view_creator_underline"><![CDATA[<u>View Creator</u>]]></string>
+    <string name="my_favorites">My Favorites</string>
+    <string name="delete">Delete</string>
+    <string name="title_delete_favorites">Delete All Favorites?</string>
+    <string name="description_delete_favorites">Are you sure want to delete all your favorite videos?</string>
+    <string name="yes">Yes</string>
+    <string name="cancel">Cancel</string>
+    <string name="data_not_found">Data not found</string>
+    <string name="select_the_size">Select the Size</string>
+    <string name="alert_need_storage_permission">Storage permission is required</string>
+    <string name="download_video_success">Video saved to gallery</string>
+    <string name="download_video_failed">Failed to download video</string>
+    <string name="copy_link">Copy Link</string>
+    <string name="share_link">Share Link</string>
+    <string name="share_file_video">Share File Video</string>
+    <string name="url_copied">Link video copied to clipboard</string>
 </resources>

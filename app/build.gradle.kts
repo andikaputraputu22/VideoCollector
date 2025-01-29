@@ -2,7 +2,9 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.hilt.android)
+    alias(libs.plugins.ksp)
     id("kotlin-kapt")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -59,8 +61,16 @@ dependencies {
     implementation(libs.retrofit.converter.gson)
     implementation(libs.swiperefreshlayout)
     implementation(libs.glide)
+    implementation(libs.shimmer)
+    implementation(libs.media3.exoplayer)
+    implementation(libs.media3.exoplayer.hls)
+    implementation(libs.media3.ui)
+    implementation(libs.media3.common)
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
+    ksp(libs.room.compiler)
     annotationProcessor(libs.glide.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
