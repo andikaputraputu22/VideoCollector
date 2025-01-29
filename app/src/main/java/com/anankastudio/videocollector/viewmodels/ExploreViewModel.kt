@@ -43,7 +43,7 @@ class ExploreViewModel @Inject constructor(
         if (page > 1) loadingMore.value = true else loading.value = true
         viewModelScope.launch {
             try {
-                when(val result = videoRepository.fetchAllCollectionItems(page)) {
+                when(val result = videoRepository.fetchInitialCollectionItems(page)) {
                     is Result.Success -> {
                         val data = result.data
                         val perPage = data.perPage ?: 15

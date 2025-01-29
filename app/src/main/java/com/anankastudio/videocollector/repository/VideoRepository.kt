@@ -4,6 +4,7 @@ import android.content.Context
 import com.anankastudio.videocollector.api.ApiService
 import com.anankastudio.videocollector.database.DetailVideoDao
 import com.anankastudio.videocollector.database.FavoriteVideoDao
+import com.anankastudio.videocollector.models.CollectionResponse
 import com.anankastudio.videocollector.models.FeaturedCollectionResponse
 import com.anankastudio.videocollector.models.PopularResponse
 import com.anankastudio.videocollector.models.Video
@@ -76,7 +77,27 @@ class VideoRepository @Inject constructor(
         }
     }
 
-    suspend fun fetchAllCollectionItems(page: Int): Result<DataContentCollection> = withContext(Dispatchers.IO) {
+    suspend fun fetchAllCollectionItems(id: String, page: Int): Result<CollectionResponse> = withContext(Dispatchers.IO) {
+        try {
+            val response = apiService.getContentCollection(
+                id,
+                page,
+                "videos",
+                "desc"
+            )
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    Result.Success(it)
+                } ?: Result.Error("Response body is null")
+            } else {
+                Result.Error("Failed to fetch data: ${response.code()}")
+            }
+        } catch (e: Exception) {
+            Result.Error("Exception occurred: ${e.message}")
+        }
+    }
+
+    suspend fun fetchInitialCollectionItems(page: Int): Result<DataContentCollection> = withContext(Dispatchers.IO) {
         try {
             val featuredCollection = fetchFeaturedCollection(page)
                 ?: return@withContext Result.Error("Empty collection")
