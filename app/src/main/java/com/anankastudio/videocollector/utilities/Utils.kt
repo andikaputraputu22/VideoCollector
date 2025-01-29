@@ -2,8 +2,12 @@ package com.anankastudio.videocollector.utilities
 
 import android.Manifest
 import android.app.Activity
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.util.DisplayMetrics
 import android.view.WindowManager
@@ -115,5 +119,35 @@ class Utils {
                 Toast.makeText(context, context.getString(R.string.alert_need_storage_permission), Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    fun copyUrlToClipboard(url: String, context: Context) {
+        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText("url", url)
+        clipboard.setPrimaryClip(clip)
+    }
+
+    fun shareContent(content: String, context: Context) {
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, content)
+        }
+        context.startActivity(Intent.createChooser(intent, "Share Link"))
+    }
+
+    fun shareFileVideo(videoUri: String, context: Context) {
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "video/mp4"
+            putExtra(Intent.EXTRA_STREAM, Uri.parse(videoUri))
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        context.startActivity(Intent.createChooser(intent, "Share Video"))
+    }
+
+    fun openExternalBrowser(url: String, context: Context) {
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            data = Uri.parse(url)
+        }
+        context.startActivity(intent)
     }
 }

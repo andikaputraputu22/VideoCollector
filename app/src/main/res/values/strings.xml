@@ -39,4 +39,8 @@
     <string name="alert_need_storage_permission">Storage permission is required</string>
     <string name="download_video_success">Video saved to gallery</string>
     <string name="download_video_failed">Failed to download video</string>
+    <string name="copy_link">Copy Link</string>
+    <string name="share_link">Share Link</string>
+    <string name="share_file_video">Share File Video</string>
+    <string name="url_copied">Link video copied to clipboard</string>
 </resources>

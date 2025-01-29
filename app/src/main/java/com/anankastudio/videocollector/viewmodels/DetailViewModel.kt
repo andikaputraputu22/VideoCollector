@@ -42,6 +42,7 @@ class DetailViewModel @Inject constructor(
 
     var dataDetailVideo: DetailVideo? = null
     var onFavorite: Boolean = false
+    var onShareFileVideo: Boolean = false
 
     fun getDetailVideo(id: Long) {
         loading.value = true
@@ -138,12 +139,32 @@ class DetailViewModel @Inject constructor(
         contents.add(contentDetailInfo)
     }
 
-    fun downloadVideo(context: Context, url: String) {
+    fun downloadVideo(context: Context, url: String, isForShare: Boolean = false) {
         mediaRepository.downloadVideo(context, url, onSuccess = {
             _downloadStatus.postValue(ResultStatus.Success)
+            if (isForShare) {
+                onShareFileVideo = false
+                shareFileVideo(it, context)
+            }
         }, onError = { e ->
             _downloadStatus.postValue(ResultStatus.Error(e))
         })
+    }
+
+    fun copyUrlVideo(url: String, context: Context) {
+        utils.copyUrlToClipboard(url, context)
+    }
+
+    fun shareContent(url: String, context: Context) {
+        utils.shareContent(url, context)
+    }
+
+    private fun shareFileVideo(videoUri: String, context: Context) {
+        utils.shareFileVideo(videoUri, context)
+    }
+
+    fun showCreatorProfile(url: String, context: Context) {
+        utils.openExternalBrowser(url, context)
     }
 }
 

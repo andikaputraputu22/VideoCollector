@@ -2,6 +2,7 @@ package com.anankastudio.videocollector.repository
 
 import android.content.ContentValues
 import android.content.Context
+import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
@@ -18,7 +19,7 @@ class MediaRepository {
     fun downloadVideo(
         context: Context,
         url: String,
-        onSuccess: () -> Unit,
+        onSuccess: (videoUri: String) -> Unit,
         onError: (Exception) -> Unit
     ) {
         Thread {
@@ -27,8 +28,12 @@ class MediaRepository {
                 if (response.isSuccessful) {
                     val inputStream = response.body()?.byteStream()
                     inputStream?.let {
-                        saveVideoToMediaStore(context, it)
-                        onSuccess()
+                        val videoUri = saveVideoToMediaStore(context, it)
+                        if (videoUri != null) {
+                            onSuccess(videoUri.toString())
+                        } else {
+                            throw Exception("Failed to save video")
+                        }
                     } ?: throw Exception("Failed to download video")
                 } else {
                     throw Exception("Request failed with code: ${response.code()}")
@@ -47,7 +52,7 @@ class MediaRepository {
     private fun saveVideoToMediaStore(
         context: Context,
         inputStream: InputStream
-    ) {
+    ): Uri? {
         val contentResolver = context.contentResolver
         val videoCollection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
@@ -72,6 +77,8 @@ class MediaRepository {
                 }
             }
         }
+
+        return uri
     }
 
     private fun writeToStream(
