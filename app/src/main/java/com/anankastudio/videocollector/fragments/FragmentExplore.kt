@@ -18,12 +18,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.anankastudio.videocollector.R
+import com.anankastudio.videocollector.activities.CollectionActivity
 import com.anankastudio.videocollector.activities.DetailVideoActivity
 import com.anankastudio.videocollector.adapters.ExploreAdapter
 import com.anankastudio.videocollector.bottomsheet.FilterBottomSheet
 import com.anankastudio.videocollector.databinding.FragmentExploreBinding
+import com.anankastudio.videocollector.interfaces.OnClickCollection
 import com.anankastudio.videocollector.interfaces.OnClickFilter
 import com.anankastudio.videocollector.interfaces.OnClickVideo
+import com.anankastudio.videocollector.models.Video
 import com.anankastudio.videocollector.utilities.Constants
 import com.anankastudio.videocollector.utilities.SpaceItemDecoration
 import com.anankastudio.videocollector.viewmodels.ExploreViewModel
@@ -147,6 +150,7 @@ class FragmentExplore : Fragment(), OnClickFilter {
         updateRecyclerViewLayout()
         binding.rvVideo.adapter = exploreAdapter
         exploreAdapter.onClickVideo = onClickVideo
+        exploreAdapter.onClickCollection = onClickCollection
     }
 
     private fun updateRecyclerViewLayout() {
@@ -182,6 +186,17 @@ class FragmentExplore : Fragment(), OnClickFilter {
             val intent = Intent(requireContext(), DetailVideoActivity::class.java)
             intent.putExtra(DetailVideoActivity.EXTRA_ID_VIDEO, id)
             startActivity(intent)
+        }
+    }
+
+    private val onClickCollection = object : OnClickCollection {
+        override fun onClickCollection(id: String?, title: String?) {
+            id?.let {
+                val intent = Intent(requireContext(), CollectionActivity::class.java)
+                intent.putExtra(CollectionActivity.EXTRA_ID_COLLECTION, it)
+                intent.putExtra(CollectionActivity.EXTRA_TITLE_COLLECTION, title)
+                startActivity(intent)
+            }
         }
     }
 
