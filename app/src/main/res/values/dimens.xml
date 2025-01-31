@@ -2,4 +2,5 @@
 <resources>
     <dimen name="item_spacing_video">4dp</dimen>
     <dimen name="item_spacing_preview_video">2dp</dimen>
+    <dimen name="item_spacing_search_history">3dp</dimen>
 </resources>
