@@ -140,6 +140,10 @@ class FragmentExplore : Fragment(), OnClickFilter {
         binding.filter.setOnClickListener {
             showFilterBottomSheet()
         }
+
+        binding.scrollToTop.setOnClickListener {
+            binding.rvVideo.smoothScrollToPosition(0)
+        }
     }
 
     fun loadCollectionContent() {
@@ -267,6 +271,17 @@ class FragmentExplore : Fragment(), OnClickFilter {
 
     private fun checkScrollVideoList() {
         binding.rvVideo.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (!recyclerView.canScrollVertically(-1)) {
+                    binding.scrollToTop.hide()
+                } else {
+                    if (dy > 0 && binding.scrollToTop.visibility != View.VISIBLE) {
+                        binding.scrollToTop.show()
+                    }
+                }
+            }
+
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                     if (viewModel.typeContent == Constants.TYPE_CONTENT_VIDEO) {

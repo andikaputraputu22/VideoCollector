@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.anankastudio.videocollector.R
 import com.anankastudio.videocollector.activities.DetailVideoActivity
@@ -44,7 +45,7 @@ class FragmentFavorite : Fragment(), OnClickConfirm {
         setupListVideo()
         setupClickListener()
         observeData()
-
+        checkScrollVideoList()
         binding.swipeRefresh.setOnRefreshListener {
             viewModel.getAllFavoriteVideo()
         }
@@ -66,6 +67,10 @@ class FragmentFavorite : Fragment(), OnClickConfirm {
     private fun setupClickListener() {
         binding.delete.setOnClickListener {
             showConfirmDeleteFavorite()
+        }
+
+        binding.scrollToTop.setOnClickListener {
+            binding.rvVideoFavorite.smoothScrollToPosition(0)
         }
     }
 
@@ -100,6 +105,21 @@ class FragmentFavorite : Fragment(), OnClickConfirm {
             childFragmentManager,
             ConfirmBottomSheet.TAG
         )
+    }
+
+    private fun checkScrollVideoList() {
+        binding.rvVideoFavorite.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (!recyclerView.canScrollVertically(-1)) {
+                    binding.scrollToTop.hide()
+                } else {
+                    if (dy > 0 && binding.scrollToTop.visibility != View.VISIBLE) {
+                        binding.scrollToTop.show()
+                    }
+                }
+            }
+        })
     }
 
     override fun onClickYes() {
