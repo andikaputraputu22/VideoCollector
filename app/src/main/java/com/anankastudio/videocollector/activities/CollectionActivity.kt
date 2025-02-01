@@ -37,6 +37,7 @@ class CollectionActivity : AppCompatActivity() {
 
         setupStatusBar()
         setupListVideo()
+        setupClickListener()
         observeData()
         checkScrollVideoList()
         binding.swipeRefresh.setOnRefreshListener {
@@ -72,6 +73,12 @@ class CollectionActivity : AppCompatActivity() {
         videoAdapter.onClickVideo = onClickVideo
         val space = resources.getDimensionPixelSize(R.dimen.item_spacing_video)
         binding.rvVideo.addItemDecoration(SpaceItemDecoration(space))
+    }
+
+    private fun setupClickListener() {
+        binding.scrollToTop.setOnClickListener {
+            binding.rvVideo.smoothScrollToPosition(0)
+        }
     }
 
     private fun firstLoadVideo() {
@@ -113,6 +120,17 @@ class CollectionActivity : AppCompatActivity() {
 
     private fun checkScrollVideoList() {
         binding.rvVideo.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (!recyclerView.canScrollVertically(-1)) {
+                    binding.scrollToTop.hide()
+                } else {
+                    if (dy > 0 && binding.scrollToTop.visibility != View.VISIBLE) {
+                        binding.scrollToTop.show()
+                    }
+                }
+            }
+
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                     val layoutManager = binding.rvVideo.layoutManager as StaggeredGridLayoutManager

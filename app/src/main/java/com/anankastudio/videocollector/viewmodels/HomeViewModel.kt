@@ -21,6 +21,7 @@ class HomeViewModel @Inject constructor(
     var pageTotal = 1
     val loading by lazy { MutableLiveData<Boolean>() }
     val loadingMore by lazy { MutableLiveData<Boolean>() }
+    val isDataAvailable by lazy { MutableLiveData<Boolean>() }
 
     private val _listVideo = MutableLiveData<List<Video>?>()
     val listVideo: LiveData<List<Video>?> = _listVideo
@@ -38,11 +39,13 @@ class HomeViewModel @Inject constructor(
                         val totalResults: Double = totalPage/perPage.toDouble()
                         pageTotal = ceil(totalResults).toInt()
                         val listVideo = data.videos
+                        isDataAvailable.value = listVideo?.isNotEmpty()
                         _listVideo.postValue(listVideo)
                         page++
                     }
                     is Result.Error -> {
                         pageTotal = -1
+                        isDataAvailable.value = false
                     }
                 }
             } finally {

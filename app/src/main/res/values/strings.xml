@@ -43,4 +43,5 @@
     <string name="share_link">Share Link</string>
     <string name="share_file_video">Share File Video</string>
     <string name="url_copied">Link video copied to clipboard</string>
+    <string name="scroll_to_top">Scroll to Top</string>
 </resources>

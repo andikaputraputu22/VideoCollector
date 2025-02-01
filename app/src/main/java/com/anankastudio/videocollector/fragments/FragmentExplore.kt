@@ -21,11 +21,13 @@ import com.anankastudio.videocollector.R
 import com.anankastudio.videocollector.activities.CollectionActivity
 import com.anankastudio.videocollector.activities.DetailVideoActivity
 import com.anankastudio.videocollector.adapters.ExploreAdapter
+import com.anankastudio.videocollector.adapters.SearchHistoryAdapter
 import com.anankastudio.videocollector.bottomsheet.FilterBottomSheet
 import com.anankastudio.videocollector.databinding.FragmentExploreBinding
 import com.anankastudio.videocollector.interfaces.OnClickCollection
 import com.anankastudio.videocollector.interfaces.OnClickFilter
 import com.anankastudio.videocollector.interfaces.OnClickVideo
+import com.anankastudio.videocollector.interfaces.OnSelectSearchHistory
 import com.anankastudio.videocollector.models.Video
 import com.anankastudio.videocollector.utilities.Constants
 import com.anankastudio.videocollector.utilities.SpaceItemDecoration
@@ -61,6 +63,7 @@ class FragmentExplore : Fragment(), OnClickFilter {
         )
         updateClearButtonVisibility()
         setupClickListener()
+        setupListSearchHistory()
         setupListVideo()
         observeData()
         checkScrollVideoList()
@@ -122,6 +125,7 @@ class FragmentExplore : Fragment(), OnClickFilter {
                         updateRecyclerViewLayout()
                         firstLoadVideo()
                         activity?.let { viewModel.hideKeyboard(it) }
+                        viewModel.saveSearchKeyword(viewModel.query)
                     }
                     true
                 }
@@ -136,6 +140,10 @@ class FragmentExplore : Fragment(), OnClickFilter {
         binding.filter.setOnClickListener {
             showFilterBottomSheet()
         }
+
+        binding.scrollToTop.setOnClickListener {
+            binding.rvVideo.smoothScrollToPosition(0)
+        }
     }
 
     fun loadCollectionContent() {
@@ -144,6 +152,12 @@ class FragmentExplore : Fragment(), OnClickFilter {
         viewModel.typeContent = Constants.TYPE_CONTENT_COLLECTION
         updateRecyclerViewLayout()
         firstLoadCollection()
+    }
+
+    private fun setupListSearchHistory() {
+        binding.rvSearchHistory.adapter = searchHistoryAdapter
+        val space = resources.getDimensionPixelSize(R.dimen.item_spacing_preview_video)
+        binding.rvSearchHistory.addItemDecoration(SpaceItemDecoration(space))
     }
 
     private fun setupListVideo() {
@@ -227,11 +241,47 @@ class FragmentExplore : Fragment(), OnClickFilter {
 
         viewModel.isSearchActive.observe(viewLifecycleOwner) {
             binding.back.visibility = if (it) View.VISIBLE else View.GONE
+            binding.rvSearchHistory.visibility = if (it) View.GONE else View.VISIBLE
         }
+
+        viewModel.listSearchHistory.observe(viewLifecycleOwner) {
+            it?.let { listSearchHistory ->
+                searchHistoryAdapter.updateList(listSearchHistory)
+            }
+        }
+
+        viewModel.isDataAvailable.observe(viewLifecycleOwner) {
+            binding.notFoundContainer.visibility = if (it) View.GONE else View.VISIBLE
+        }
+    }
+
+    private val searchHistoryAdapter by lazy {
+        SearchHistoryAdapter(listOf(), object : OnSelectSearchHistory {
+            override fun onClickKeyword(keyword: String) {
+                viewModel.query = keyword
+                viewModel.typeContent = Constants.TYPE_CONTENT_VIDEO
+                updateRecyclerViewLayout()
+                firstLoadVideo()
+                binding.inputSearch.setText(keyword)
+                binding.rvSearchHistory.visibility = View.GONE
+                activity?.let { viewModel.hideKeyboard(it) }
+            }
+        })
     }
 
     private fun checkScrollVideoList() {
         binding.rvVideo.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (!recyclerView.canScrollVertically(-1)) {
+                    binding.scrollToTop.hide()
+                } else {
+                    if (dy > 0 && binding.scrollToTop.visibility != View.VISIBLE) {
+                        binding.scrollToTop.show()
+                    }
+                }
+            }
+
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                     if (viewModel.typeContent == Constants.TYPE_CONTENT_VIDEO) {

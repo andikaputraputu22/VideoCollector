@@ -40,6 +40,7 @@ class FragmentHome : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupListVideo()
+        setupClickListener()
         observeData()
         checkScrollVideoList()
         binding.swipeRefresh.setOnRefreshListener {
@@ -54,6 +55,12 @@ class FragmentHome : Fragment() {
         videoAdapter.onClickVideo = onClickVideo
         val space = resources.getDimensionPixelSize(R.dimen.item_spacing_video)
         binding.rvVideo.addItemDecoration(SpaceItemDecoration(space))
+    }
+
+    private fun setupClickListener() {
+        binding.scrollToTop.setOnClickListener {
+            binding.rvVideo.smoothScrollToPosition(0)
+        }
     }
 
     private fun firstLoadVideo() {
@@ -79,6 +86,10 @@ class FragmentHome : Fragment() {
         viewModel.loadingMore.observe(viewLifecycleOwner) {
             binding.progressIndicator.visibility = if (it) View.VISIBLE else View.GONE
         }
+
+        viewModel.isDataAvailable.observe(viewLifecycleOwner) {
+            binding.notFoundContainer.visibility = if (it) View.GONE else View.VISIBLE
+        }
     }
 
     private val onClickVideo = object : OnClickVideo {
@@ -93,6 +104,13 @@ class FragmentHome : Fragment() {
         binding.rvVideo.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
+                if (!recyclerView.canScrollVertically(-1)) {
+                    binding.scrollToTop.hide()
+                } else {
+                    if (dy > 0 && binding.scrollToTop.visibility != View.VISIBLE) {
+                        binding.scrollToTop.show()
+                    }
+                }
             }
 
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
