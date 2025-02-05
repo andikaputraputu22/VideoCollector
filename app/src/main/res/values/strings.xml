@@ -37,6 +37,7 @@
     <string name="data_not_found">Data not found</string>
     <string name="select_the_size">Select the Size</string>
     <string name="alert_need_storage_permission">Storage permission is required</string>
+    <string name="download_video_start">Download started, check notifications when done</string>
     <string name="download_video_success">Video saved to gallery</string>
     <string name="download_video_failed">Failed to download video</string>
     <string name="copy_link">Copy Link</string>
@@ -44,4 +45,7 @@
     <string name="share_file_video">Share File Video</string>
     <string name="url_copied">Link video copied to clipboard</string>
     <string name="scroll_to_top">Scroll to Top</string>
+    <string name="notification_permission">Notification Permission</string>
+    <string name="enable_notification_message">Enable notifications to get alerted when your video is ready.</string>
+    <string name="allow">Allow</string>
 </resources>

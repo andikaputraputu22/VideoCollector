@@ -6,13 +6,18 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import com.anankastudio.videocollector.utilities.NotificationManager
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import java.io.InputStream
 import java.io.OutputStream
+import javax.inject.Inject
 
-class MediaRepository {
+class MediaRepository @Inject constructor(
+    private val context: Context,
+    private val notificationManager: NotificationManager
+) {
 
     private val client = OkHttpClient()
 
@@ -31,6 +36,12 @@ class MediaRepository {
                         val videoUri = saveVideoToMediaStore(context, it)
                         if (videoUri != null) {
                             onSuccess(videoUri.toString())
+                            notificationManager.showDownloadNotification(
+                                context,
+                                "Download Complete",
+                                "Video saved to gallery.",
+                                videoUri
+                            )
                         } else {
                             throw Exception("Failed to save video")
                         }

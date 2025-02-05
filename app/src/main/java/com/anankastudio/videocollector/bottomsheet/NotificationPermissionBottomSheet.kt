@@ -6,14 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.anankastudio.videocollector.R
-import com.anankastudio.videocollector.databinding.BottomSheetConfirmBinding
+import com.anankastudio.videocollector.databinding.BottomSheetNotificationBinding
 import com.anankastudio.videocollector.interfaces.OnClickConfirm
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class ConfirmBottomSheet : BottomSheetDialogFragment() {
+class NotificationPermissionBottomSheet : BottomSheetDialogFragment() {
 
-    private var _binding: BottomSheetConfirmBinding? = null
+    private var _binding: BottomSheetNotificationBinding? = null
     private val binding get() = _binding!!
     private lateinit var dialog: BottomSheetDialog
     var listener: OnClickConfirm? = null
@@ -23,7 +23,7 @@ class ConfirmBottomSheet : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = BottomSheetConfirmBinding.inflate(inflater, container, false)
+        _binding = BottomSheetNotificationBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -44,7 +44,7 @@ class ConfirmBottomSheet : BottomSheetDialogFragment() {
 
     private fun setupClickListener() {
         with(binding) {
-            yes.setOnClickListener {
+            allow.setOnClickListener {
                 listener?.onClickConfirm()
                 dismiss()
             }
@@ -61,6 +61,6 @@ class ConfirmBottomSheet : BottomSheetDialogFragment() {
     }
 
     companion object {
-        const val TAG = "confirm_bottom_sheet"
+        const val TAG = "notification_permission_bottom_sheet"
     }
 }

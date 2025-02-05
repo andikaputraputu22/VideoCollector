@@ -170,9 +170,10 @@ class DetailVideoActivity : AppCompatActivity(), OnClickDownload, OnClickMoreFea
 
         viewModel.downloadStatus.observe(this) {
             when(it) {
-                is ResultStatus.Success -> {
-                    showToast(getString(R.string.download_video_success))
+                is ResultStatus.Prepare -> {
+                    showToast(getString(R.string.download_video_start))
                 }
+                is ResultStatus.Success -> {}
                 is ResultStatus.Error -> {
                     showToast(getString(R.string.download_video_failed))
                 }
@@ -208,7 +209,7 @@ class DetailVideoActivity : AppCompatActivity(), OnClickDownload, OnClickMoreFea
         Toast.makeText(
             this@DetailVideoActivity,
             message,
-            Toast.LENGTH_SHORT
+            Toast.LENGTH_LONG
         ).show()
     }
 

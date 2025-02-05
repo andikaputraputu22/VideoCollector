@@ -3,24 +3,46 @@ package com.anankastudio.videocollector.activities
 import android.os.Build
 import android.os.Bundle
 import android.view.WindowInsetsController
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
 import com.anankastudio.videocollector.R
+import com.anankastudio.videocollector.bottomsheet.NotificationPermissionBottomSheet
 import com.anankastudio.videocollector.databinding.ActivityMainBinding
 import com.anankastudio.videocollector.fragments.FragmentExplore
 import com.anankastudio.videocollector.fragments.FragmentFavorite
 import com.anankastudio.videocollector.fragments.FragmentHome
+import com.anankastudio.videocollector.interfaces.OnClickConfirm
+import com.anankastudio.videocollector.utilities.NotificationManager
+import com.anankastudio.videocollector.viewmodels.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), OnClickConfirm {
+
+    @Inject
+    lateinit var notificationManager: NotificationManager
 
     private lateinit var binding: ActivityMainBinding
+    private val viewModel: MainViewModel by viewModels()
     private val homeFragment = FragmentHome()
     private val exploreFragment = FragmentExplore()
     private val favoriteFragment = FragmentFavorite()
+    private val notificationPermissionBottomSheet = NotificationPermissionBottomSheet()
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                notificationManager.onPermissionGranted?.invoke()
+            } else {
+                notificationManager.onPermissionDenied?.invoke()
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +52,28 @@ class MainActivity : AppCompatActivity() {
 
         setupStatusBar()
         setupBottomNavigation()
+
+        notificationManager.onPermissionGranted = {}
+        notificationManager.onPermissionDenied = {}
+
+        notificationManager.onShowPermissionRationale = {
+            viewModel.isHardNotificationRequest = false
+            showNotificationPermissionDialog()
+        }
+        notificationManager.onShowNotificationSetting = {
+            viewModel.isHardNotificationRequest = true
+            showNotificationPermissionDialog()
+        }
+
+        notificationManager.checkNotificationPermission(requestPermissionLauncher, this)
+    }
+
+    private fun showNotificationPermissionDialog() {
+        notificationPermissionBottomSheet.listener = this
+        notificationPermissionBottomSheet.show(
+            supportFragmentManager,
+            NotificationPermissionBottomSheet.TAG
+        )
     }
 
     private fun setupStatusBar() {
@@ -75,6 +119,15 @@ class MainActivity : AppCompatActivity() {
             transaction.add(R.id.fragmentContainer, fragment)
         }
         transaction.commit()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    override fun onClickConfirm() {
+        if (viewModel.isHardNotificationRequest) {
+            notificationManager.openAppSettings(this)
+        } else {
+            notificationManager.requestPermission(requestPermissionLauncher)
+        }
     }
 
     override fun onBackPressed() {

@@ -140,6 +140,7 @@ class DetailViewModel @Inject constructor(
     }
 
     fun downloadVideo(context: Context, url: String, isForShare: Boolean = false) {
+        _downloadStatus.postValue(ResultStatus.Prepare)
         mediaRepository.downloadVideo(context, url, onSuccess = {
             _downloadStatus.postValue(ResultStatus.Success)
             if (isForShare) {
@@ -169,6 +170,7 @@ class DetailViewModel @Inject constructor(
 }
 
 sealed class ResultStatus {
+    data object Prepare: ResultStatus()
     data object Success: ResultStatus()
     data class Error(val exception: Exception): ResultStatus()
 }

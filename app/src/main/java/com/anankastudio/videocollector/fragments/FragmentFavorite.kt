@@ -122,7 +122,7 @@ class FragmentFavorite : Fragment(), OnClickConfirm {
         })
     }
 
-    override fun onClickYes() {
+    override fun onClickConfirm() {
         viewModel.deleteAllFavoriteVideo()
     }
 
