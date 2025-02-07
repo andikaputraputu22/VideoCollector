@@ -21,6 +21,7 @@ import com.anankastudio.videocollector.interfaces.OnClickCreator
 import com.anankastudio.videocollector.interfaces.OnClickDownload
 import com.anankastudio.videocollector.interfaces.OnClickMoreFeature
 import com.anankastudio.videocollector.models.item.ContentDetailProfile
+import com.anankastudio.videocollector.utilities.CustomProgressDialog
 import com.anankastudio.videocollector.utilities.Utils
 import com.anankastudio.videocollector.utilities.VideoPlayerManager
 import com.anankastudio.videocollector.viewmodels.DetailViewModel
@@ -42,6 +43,7 @@ class DetailVideoActivity : AppCompatActivity(), OnClickDownload, OnClickMoreFea
     private lateinit var adapter: DetailVideoAdapter
     private val downloadBottomSheet = DownloadBottomSheet()
     private val moreFeatureBottomSheet = MoreFeatureBottomSheet()
+    private lateinit var progressDialog: CustomProgressDialog
     private var urlDownload = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,6 +53,8 @@ class DetailVideoActivity : AppCompatActivity(), OnClickDownload, OnClickMoreFea
 
         shimmerAnimation = AnimationUtils.loadAnimation(this, R.anim.shimmer_animation)
         idVideo = intent.getLongExtra(EXTRA_ID_VIDEO, 0L)
+        progressDialog = CustomProgressDialog(this)
+        progressDialog.setCancelable(false)
 
         setupStatusBar()
         setupListDetail()
@@ -171,11 +175,22 @@ class DetailVideoActivity : AppCompatActivity(), OnClickDownload, OnClickMoreFea
         viewModel.downloadStatus.observe(this) {
             when(it) {
                 is ResultStatus.Prepare -> {
-                    showToast(getString(R.string.download_video_start))
+                    if (it.isForShare) {
+                        progressDialog.show()
+                    } else {
+                        showToast(getString(R.string.download_video_start))
+                    }
                 }
-                is ResultStatus.Success -> {}
+                is ResultStatus.Success -> {
+                    if (progressDialog.isShowing) {
+                        progressDialog.dismiss()
+                    }
+                }
                 is ResultStatus.Error -> {
                     showToast(getString(R.string.download_video_failed))
+                    if (progressDialog.isShowing) {
+                        progressDialog.dismiss()
+                    }
                 }
             }
         }

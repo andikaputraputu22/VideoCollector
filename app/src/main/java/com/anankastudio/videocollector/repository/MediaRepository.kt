@@ -24,6 +24,7 @@ class MediaRepository @Inject constructor(
     fun downloadVideo(
         context: Context,
         url: String,
+        isForShare: Boolean = false,
         onSuccess: (videoUri: String) -> Unit,
         onError: (Exception) -> Unit
     ) {
@@ -36,12 +37,14 @@ class MediaRepository @Inject constructor(
                         val videoUri = saveVideoToMediaStore(context, it)
                         if (videoUri != null) {
                             onSuccess(videoUri.toString())
-                            notificationManager.showDownloadNotification(
-                                context,
-                                "Download Complete",
-                                "Video saved to gallery.",
-                                videoUri
-                            )
+                            if (!isForShare) {
+                                notificationManager.showDownloadNotification(
+                                    context,
+                                    "Download Complete",
+                                    "Video saved to gallery.",
+                                    videoUri
+                                )
+                            }
                         } else {
                             throw Exception("Failed to save video")
                         }
