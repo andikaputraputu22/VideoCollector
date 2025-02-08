@@ -4,8 +4,10 @@ import android.content.Context
 import com.anankastudio.videocollector.api.ApiService
 import com.anankastudio.videocollector.database.DetailVideoDao
 import com.anankastudio.videocollector.database.FavoriteVideoDao
+import com.anankastudio.videocollector.database.SearchHistoryDao
 import com.anankastudio.videocollector.repository.MediaRepository
 import com.anankastudio.videocollector.repository.VideoRepository
+import com.anankastudio.videocollector.utilities.NotificationManager
 import com.anankastudio.videocollector.utilities.SharedPreferencesManager
 import com.anankastudio.videocollector.utilities.Utils
 import dagger.Module
@@ -26,21 +28,34 @@ object AppModule {
         apiService: ApiService,
         detailVideoDao: DetailVideoDao,
         favoriteVideoDao: FavoriteVideoDao,
+        searchHistoryDao: SearchHistoryDao,
         utils: Utils
     ): VideoRepository {
-        return VideoRepository(context,apiService, detailVideoDao, favoriteVideoDao, utils)
+        return VideoRepository(context, apiService, detailVideoDao, favoriteVideoDao, searchHistoryDao, utils)
     }
 
     @Singleton
     @Provides
-    fun provideMediaRepository(): MediaRepository {
-        return MediaRepository()
+    fun provideMediaRepository(
+        @ApplicationContext context: Context,
+        notificationManager: NotificationManager
+    ): MediaRepository {
+        return MediaRepository(context, notificationManager)
     }
 
     @Singleton
     @Provides
     fun provideUtils(): Utils {
         return Utils()
+    }
+
+    @Singleton
+    @Provides
+    fun provideNotificationManager(
+        @ApplicationContext context: Context,
+        sharedPreferencesManager: SharedPreferencesManager
+    ): NotificationManager {
+        return NotificationManager(context, sharedPreferencesManager)
     }
 
     @Singleton

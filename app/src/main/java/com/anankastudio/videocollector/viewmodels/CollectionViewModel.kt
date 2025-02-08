@@ -13,7 +13,7 @@ import javax.inject.Inject
 import kotlin.math.ceil
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
+class CollectionViewModel @Inject constructor(
     private val videoRepository: VideoRepository
 ) : ViewModel() {
 
@@ -22,23 +22,24 @@ class HomeViewModel @Inject constructor(
     val loading by lazy { MutableLiveData<Boolean>() }
     val loadingMore by lazy { MutableLiveData<Boolean>() }
     val isDataAvailable by lazy { MutableLiveData<Boolean>() }
+    var collectionId = ""
 
     private val _listVideo = MutableLiveData<List<Video>?>()
     val listVideo: LiveData<List<Video>?> = _listVideo
 
-    fun getPopularVideo() {
+    fun getCollectionVideo() {
         if (page > pageTotal) return
         if (page > 1) loadingMore.value = true else loading.value = true
         viewModelScope.launch {
             try {
-                when(val result = videoRepository.fetchPopularVideo(page)) {
+                when(val result = videoRepository.fetchAllCollectionItems(collectionId, page)) {
                     is Result.Success -> {
                         val data = result.data
                         val perPage = data.perPage ?: 15
                         val totalPage = data.totalResults ?: 0
                         val totalResults: Double = totalPage/perPage.toDouble()
                         pageTotal = ceil(totalResults).toInt()
-                        val listVideo = data.videos
+                        val listVideo = data.media
                         isDataAvailable.value = listVideo?.isNotEmpty()
                         _listVideo.postValue(listVideo)
                         page++
@@ -58,7 +59,7 @@ class HomeViewModel @Inject constructor(
     fun onScrolledToEnd() {
         if (loading.value != true && loadingMore.value != true && page <= pageTotal) {
             loadingMore.value = true
-            getPopularVideo()
+            getCollectionVideo()
         }
     }
 }

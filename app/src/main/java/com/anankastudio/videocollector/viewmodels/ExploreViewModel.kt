@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.anankastudio.videocollector.interfaces.ExplorePage
 import com.anankastudio.videocollector.models.Video
 import com.anankastudio.videocollector.models.item.ContentVideo
+import com.anankastudio.videocollector.models.room.SearchHistory
 import com.anankastudio.videocollector.repository.VideoRepository
 import com.anankastudio.videocollector.utilities.Constants
 import com.anankastudio.videocollector.utilities.Result
@@ -31,9 +32,13 @@ class ExploreViewModel @Inject constructor(
     var pageTotal = 1
     val loading by lazy { MutableLiveData<Boolean>() }
     val loadingMore by lazy { MutableLiveData<Boolean>() }
+    val isDataAvailable by lazy { MutableLiveData<Boolean>() }
 
     private val _listVideo = MutableLiveData<List<ExplorePage>?>()
     val listVideo: LiveData<List<ExplorePage>?> = _listVideo
+
+    private val _listSearchHistory = MutableLiveData<List<SearchHistory>?>()
+    val listSearchHistory: LiveData<List<SearchHistory>?> = _listSearchHistory
 
     private val _isSearchActive = MutableLiveData<Boolean>()
     val isSearchActive: LiveData<Boolean> = _isSearchActive
@@ -43,24 +48,27 @@ class ExploreViewModel @Inject constructor(
         if (page > 1) loadingMore.value = true else loading.value = true
         viewModelScope.launch {
             try {
-                when(val result = videoRepository.fetchAllCollectionItems(page)) {
+                when(val result = videoRepository.fetchInitialCollectionItems(page)) {
                     is Result.Success -> {
                         val data = result.data
                         val perPage = data.perPage ?: 15
                         val totalPage = data.totalResults ?: 0
                         val totalResults: Double = totalPage/perPage.toDouble()
                         pageTotal = ceil(totalResults).toInt()
+                        isDataAvailable.value = data.items?.isNotEmpty()
                         _listVideo.postValue(data.items)
                         page++
                     }
                     is Result.Error -> {
                         pageTotal = -1
+                        isDataAvailable.value = false
                     }
                 }
             } finally {
                 loading.value = false
                 loadingMore.value = false
                 _isSearchActive.postValue(false)
+                getAllSearchHistory()
             }
         }
     }
@@ -80,11 +88,13 @@ class ExploreViewModel @Inject constructor(
                         val totalResults: Double = totalPage/perPage.toDouble()
                         pageTotal = ceil(totalResults).toInt()
                         val listVideo = data.videos
+                        isDataAvailable.value = listVideo?.isNotEmpty()
                         _listVideo.postValue(processContentVideo(listVideo))
                         page++
                     }
                     is Result.Error -> {
                         pageTotal = -1
+                        isDataAvailable.value = false
                     }
                 }
             } finally {
@@ -92,6 +102,15 @@ class ExploreViewModel @Inject constructor(
                 loadingMore.value = false
                 _isSearchActive.postValue(true)
             }
+        }
+    }
+
+    private fun getAllSearchHistory() {
+        viewModelScope.launch {
+            try {
+                val data = videoRepository.fetchAllSearchHistory()
+                _listSearchHistory.postValue(data)
+            } catch (_: Exception) {}
         }
     }
 
@@ -104,6 +123,19 @@ class ExploreViewModel @Inject constructor(
         }
 
         return content
+    }
+
+    fun saveSearchKeyword(keyword: String) {
+        viewModelScope.launch {
+            try {
+                val searchHistory = SearchHistory(
+                    id = 0,
+                    keyword = keyword,
+                    timestamp = System.currentTimeMillis()
+                )
+                videoRepository.insertSearchHistory(searchHistory)
+            } catch (_: Exception) {}
+        }
     }
 
     fun onScrolledToEnd() {

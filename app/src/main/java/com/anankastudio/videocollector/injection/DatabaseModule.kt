@@ -4,6 +4,7 @@ import android.content.Context
 import com.anankastudio.videocollector.database.AppDatabase
 import com.anankastudio.videocollector.database.DetailVideoDao
 import com.anankastudio.videocollector.database.FavoriteVideoDao
+import com.anankastudio.videocollector.database.SearchHistoryDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,5 +30,10 @@ object DatabaseModule {
     @Provides
     fun provideFavoriteVideoDao(database: AppDatabase): FavoriteVideoDao {
         return database.favoriteVideoDao()
+    }
+
+    @Provides
+    fun provideSearchHistoryDao(database: AppDatabase): SearchHistoryDao {
+        return database.searchHistoryDao()
     }
 }

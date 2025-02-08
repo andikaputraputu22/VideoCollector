@@ -4,6 +4,8 @@ import android.content.Context
 import com.anankastudio.videocollector.api.ApiService
 import com.anankastudio.videocollector.database.DetailVideoDao
 import com.anankastudio.videocollector.database.FavoriteVideoDao
+import com.anankastudio.videocollector.database.SearchHistoryDao
+import com.anankastudio.videocollector.models.CollectionResponse
 import com.anankastudio.videocollector.models.FeaturedCollectionResponse
 import com.anankastudio.videocollector.models.PopularResponse
 import com.anankastudio.videocollector.models.Video
@@ -12,6 +14,7 @@ import com.anankastudio.videocollector.models.item.ContentCollection
 import com.anankastudio.videocollector.models.item.DataContentCollection
 import com.anankastudio.videocollector.models.room.DetailVideo
 import com.anankastudio.videocollector.models.room.FavoriteVideo
+import com.anankastudio.videocollector.models.room.SearchHistory
 import com.anankastudio.videocollector.utilities.Result
 import com.anankastudio.videocollector.utilities.Utils
 import kotlinx.coroutines.Dispatchers
@@ -25,6 +28,7 @@ class VideoRepository @Inject constructor(
     private val apiService: ApiService,
     private val detailVideoDao: DetailVideoDao,
     private val favoriteVideoDao: FavoriteVideoDao,
+    private val searchHistoryDao: SearchHistoryDao,
     private val utils: Utils
 ) {
 
@@ -76,7 +80,27 @@ class VideoRepository @Inject constructor(
         }
     }
 
-    suspend fun fetchAllCollectionItems(page: Int): Result<DataContentCollection> = withContext(Dispatchers.IO) {
+    suspend fun fetchAllCollectionItems(id: String, page: Int): Result<CollectionResponse> = withContext(Dispatchers.IO) {
+        try {
+            val response = apiService.getContentCollection(
+                id,
+                page,
+                "videos",
+                "desc"
+            )
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    Result.Success(it)
+                } ?: Result.Error("Response body is null")
+            } else {
+                Result.Error("Failed to fetch data: ${response.code()}")
+            }
+        } catch (e: Exception) {
+            Result.Error("Exception occurred: ${e.message}")
+        }
+    }
+
+    suspend fun fetchInitialCollectionItems(page: Int): Result<DataContentCollection> = withContext(Dispatchers.IO) {
         try {
             val featuredCollection = fetchFeaturedCollection(page)
                 ?: return@withContext Result.Error("Empty collection")
@@ -170,6 +194,10 @@ class VideoRepository @Inject constructor(
         return favoriteVideoDao.getAllFavoriteVideo()
     }
 
+    suspend fun fetchAllSearchHistory(): List<SearchHistory> {
+        return searchHistoryDao.getAllSearchHistory()
+    }
+
     private suspend fun saveVideoToDatabase(data: Video) {
         data.id?.let {
             detailVideoDao.deleteVideo(it)
@@ -214,6 +242,10 @@ class VideoRepository @Inject constructor(
 
     suspend fun isVideoExists(id: Long): Boolean {
         return favoriteVideoDao.isVideoExists(id)
+    }
+
+    suspend fun insertSearchHistory(searchHistory: SearchHistory) {
+        searchHistoryDao.insertSearchHistoryWithCheck(searchHistory)
     }
 
     fun getBestVideoForDevice(

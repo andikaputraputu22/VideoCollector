@@ -7,11 +7,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.anankastudio.videocollector.R
 import com.anankastudio.videocollector.adapters.CollectionAdapter
 import com.anankastudio.videocollector.databinding.ItemCollectionContainerBinding
+import com.anankastudio.videocollector.interfaces.OnClickCollection
 import com.anankastudio.videocollector.models.item.ContentCollection
 import com.anankastudio.videocollector.utilities.SpaceItemDecoration
 
 class ItemContentCollection(
-    private val binding: ItemCollectionContainerBinding
+    private val binding: ItemCollectionContainerBinding,
+    private val onClickCollection: OnClickCollection
 ) : RecyclerView.ViewHolder(binding.root) {
 
     private val adapter = CollectionAdapter()
@@ -36,6 +38,10 @@ class ItemContentCollection(
             clearItemDecorations(binding.rvCollection)
             binding.rvCollection.addItemDecoration(SpaceItemDecoration(space))
             item.items?.let { adapter.setData(it) }
+
+            binding.clickOverlay.setOnClickListener {
+                onClickCollection.onClickCollection(item.id, item.title)
+            }
         }
     }
 
