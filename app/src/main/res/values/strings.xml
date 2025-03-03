@@ -49,4 +49,7 @@
     <string name="enable_notification_message">Enable notifications to get alerted when your video is ready.</string>
     <string name="allow">Allow</string>
     <string name="preparing_your_video">Preparing your video…</string>
+    <string name="widget_image">Widget Image</string>
+    <string name="widget_next">Widget Next</string>
+    <string name="trending_now">Trending Now</string>
 </resources>
