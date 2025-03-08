@@ -41,4 +41,11 @@ interface ApiService {
     suspend fun getDetailVideo(
         @Path("id") id: String
     ): Response<Video>
+
+    @GET("videos/search")
+    suspend fun getWidgetVideo(
+        @Query("page") page: Int,
+        @Query("per_page") perPage: Int,
+        @Query("query") query: String
+    ): Response<PopularResponse>
 }

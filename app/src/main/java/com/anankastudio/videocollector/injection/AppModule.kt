@@ -5,8 +5,10 @@ import com.anankastudio.videocollector.api.ApiService
 import com.anankastudio.videocollector.database.DetailVideoDao
 import com.anankastudio.videocollector.database.FavoriteVideoDao
 import com.anankastudio.videocollector.database.SearchHistoryDao
+import com.anankastudio.videocollector.database.WidgetVideoDao
 import com.anankastudio.videocollector.repository.MediaRepository
 import com.anankastudio.videocollector.repository.VideoRepository
+import com.anankastudio.videocollector.repository.WidgetRepository
 import com.anankastudio.videocollector.utilities.NotificationManager
 import com.anankastudio.videocollector.utilities.SharedPreferencesManager
 import com.anankastudio.videocollector.utilities.Utils
@@ -32,6 +34,16 @@ object AppModule {
         utils: Utils
     ): VideoRepository {
         return VideoRepository(context, apiService, detailVideoDao, favoriteVideoDao, searchHistoryDao, utils)
+    }
+
+    @Singleton
+    @Provides
+    fun provideWidgetRepository(
+        @ApplicationContext context: Context,
+        apiService: ApiService,
+        widgetVideoDao: WidgetVideoDao
+    ): WidgetRepository {
+        return WidgetRepository(context, apiService, widgetVideoDao)
     }
 
     @Singleton

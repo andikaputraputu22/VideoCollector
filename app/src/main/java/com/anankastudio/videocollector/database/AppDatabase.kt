@@ -8,14 +8,16 @@ import androidx.room.TypeConverters
 import com.anankastudio.videocollector.models.room.DetailVideo
 import com.anankastudio.videocollector.models.room.FavoriteVideo
 import com.anankastudio.videocollector.models.room.SearchHistory
+import com.anankastudio.videocollector.models.room.WidgetVideo
 
-@Database(entities = [DetailVideo::class, FavoriteVideo::class, SearchHistory::class], version = 1, exportSchema = false)
+@Database(entities = [DetailVideo::class, FavoriteVideo::class, SearchHistory::class, WidgetVideo::class], version = 1, exportSchema = false)
 @TypeConverters(VideoFileConverter::class, VideoPictureConverter::class)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun detailVideoDao(): DetailVideoDao
     abstract fun favoriteVideoDao(): FavoriteVideoDao
     abstract fun searchHistoryDao(): SearchHistoryDao
+    abstract fun widgetVideoDao(): WidgetVideoDao
 
     companion object {
         fun getDatabase(context: Context): AppDatabase {

@@ -5,6 +5,7 @@ import com.anankastudio.videocollector.database.AppDatabase
 import com.anankastudio.videocollector.database.DetailVideoDao
 import com.anankastudio.videocollector.database.FavoriteVideoDao
 import com.anankastudio.videocollector.database.SearchHistoryDao
+import com.anankastudio.videocollector.database.WidgetVideoDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -35,5 +36,10 @@ object DatabaseModule {
     @Provides
     fun provideSearchHistoryDao(database: AppDatabase): SearchHistoryDao {
         return database.searchHistoryDao()
+    }
+
+    @Provides
+    fun provideWidgetVideoDao(database: AppDatabase): WidgetVideoDao {
+        return database.widgetVideoDao()
     }
 }

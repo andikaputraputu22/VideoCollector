@@ -7,4 +7,7 @@
     <color name="indicator_color">#211939</color>
     <color name="line_color">#403a5e</color>
     <color name="button_color">#e5e6e8</color>
+    <color name="bg_transparent_widget">#66000000</color>
+    <color name="bg_transparent_widget_button">#80000000</color>
+    <color name="gradient_color">#99000000</color>
 </resources>

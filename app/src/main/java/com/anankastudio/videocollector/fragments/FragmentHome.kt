@@ -47,6 +47,7 @@ class FragmentHome : Fragment() {
             firstLoadVideo()
         }
         firstLoadVideo()
+        viewModel.getWidgetVideo()
     }
 
     private fun setupListVideo() {
