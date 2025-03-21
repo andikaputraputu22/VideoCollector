@@ -28,7 +28,6 @@ import com.anankastudio.videocollector.interfaces.OnClickCollection
 import com.anankastudio.videocollector.interfaces.OnClickFilter
 import com.anankastudio.videocollector.interfaces.OnClickVideo
 import com.anankastudio.videocollector.interfaces.OnSelectSearchHistory
-import com.anankastudio.videocollector.models.Video
 import com.anankastudio.videocollector.utilities.Constants
 import com.anankastudio.videocollector.utilities.SpaceItemDecoration
 import com.anankastudio.videocollector.viewmodels.ExploreViewModel
@@ -124,7 +123,7 @@ class FragmentExplore : Fragment(), OnClickFilter {
                         viewModel.typeContent = Constants.TYPE_CONTENT_VIDEO
                         updateRecyclerViewLayout()
                         firstLoadVideo()
-                        activity?.let { viewModel.hideKeyboard(it) }
+                        viewModel.hideKeyboard(binding.inputSearch)
                         viewModel.saveSearchKeyword(viewModel.query)
                     }
                     true
@@ -135,6 +134,7 @@ class FragmentExplore : Fragment(), OnClickFilter {
 
         binding.back.setOnClickListener {
             loadCollectionContent()
+            viewModel.hideKeyboard(binding.inputSearch)
         }
 
         binding.filter.setOnClickListener {
@@ -264,7 +264,7 @@ class FragmentExplore : Fragment(), OnClickFilter {
                 firstLoadVideo()
                 binding.inputSearch.setText(keyword)
                 binding.rvSearchHistory.visibility = View.GONE
-                activity?.let { viewModel.hideKeyboard(it) }
+                viewModel.hideKeyboard(binding.inputSearch)
             }
         })
     }

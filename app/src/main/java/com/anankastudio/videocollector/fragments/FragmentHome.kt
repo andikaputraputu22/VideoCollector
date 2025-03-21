@@ -2,6 +2,8 @@ package com.anankastudio.videocollector.fragments
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.Spanned
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,19 +14,26 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.anankastudio.videocollector.R
 import com.anankastudio.videocollector.activities.DetailVideoActivity
 import com.anankastudio.videocollector.adapters.VideoAdapter
+import com.anankastudio.videocollector.bottomsheet.CustomizeWidgetBottomSheet
+import com.anankastudio.videocollector.bottomsheet.MenuBottomSheet
 import com.anankastudio.videocollector.databinding.FragmentHomeBinding
+import com.anankastudio.videocollector.interfaces.OnClickCustomizeWidget
+import com.anankastudio.videocollector.interfaces.OnClickMenu
 import com.anankastudio.videocollector.interfaces.OnClickVideo
+import com.anankastudio.videocollector.utilities.LetterSpacingSpan
 import com.anankastudio.videocollector.utilities.SpaceItemDecoration
 import com.anankastudio.videocollector.viewmodels.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class FragmentHome : Fragment() {
+class FragmentHome : Fragment(), OnClickMenu, OnClickCustomizeWidget {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: HomeViewModel
     private val videoAdapter = VideoAdapter()
+    private val menuBottomSheet = MenuBottomSheet()
+    private val customizeWidgetBottomSheet = CustomizeWidgetBottomSheet()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,6 +48,7 @@ class FragmentHome : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupLogo()
         setupListVideo()
         setupClickListener()
         observeData()
@@ -48,6 +58,12 @@ class FragmentHome : Fragment() {
         }
         firstLoadVideo()
         viewModel.getWidgetVideo()
+    }
+
+    private fun setupLogo() {
+        val titleLogo = SpannableString(getString(R.string.app_name_uppercase))
+        titleLogo.setSpan(LetterSpacingSpan(-0.1f), 1, titleLogo.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        binding.titleLogo.text = titleLogo
     }
 
     private fun setupListVideo() {
@@ -61,6 +77,14 @@ class FragmentHome : Fragment() {
     private fun setupClickListener() {
         binding.scrollToTop.setOnClickListener {
             binding.rvVideo.smoothScrollToPosition(0)
+        }
+
+        binding.more.setOnClickListener {
+            showMenuBottomSheet()
+        }
+
+        binding.customizeWidget.setOnClickListener {
+            showCustomizeWidgetBottomSheet()
         }
     }
 
@@ -101,6 +125,20 @@ class FragmentHome : Fragment() {
         }
     }
 
+    private fun showMenuBottomSheet() {
+        menuBottomSheet.show(
+            childFragmentManager,
+            MenuBottomSheet.TAG
+        )
+    }
+
+    private fun showCustomizeWidgetBottomSheet() {
+        customizeWidgetBottomSheet.show(
+            childFragmentManager,
+            CustomizeWidgetBottomSheet.TAG
+        )
+    }
+
     private fun checkScrollVideoList() {
         binding.rvVideo.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -127,6 +165,14 @@ class FragmentHome : Fragment() {
                 }
             }
         })
+    }
+
+    override fun onClickSendFeedback() {
+
+    }
+
+    override fun onClickApplyCustomize() {
+
     }
 
     override fun onDestroyView() {
