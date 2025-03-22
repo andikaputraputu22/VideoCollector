@@ -62,6 +62,7 @@ dependencies {
     implementation(libs.swiperefreshlayout)
     implementation(libs.glide)
     implementation(libs.shimmer)
+    implementation(libs.flexbox)
     implementation(libs.media3.exoplayer)
     implementation(libs.media3.exoplayer.hls)
     implementation(libs.media3.ui)
