@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_transparent_widget">
+
+    <ImageView
+        android:id="@+id/widgetImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:contentDescription="@string/widget_image" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_gradient_left_to_right">
+
+        <TextView
+            android:id="@+id/widgetTitlePage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:textColor="@android:color/white"
+            android:text="@string/trending_now"
+            android:textSize="24sp"
+            android:fontFamily="@font/montserrat_bold" />
+
+        <TextView
+            android:id="@+id/widgetTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="16dp"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:fontFamily="@font/montserrat_medium"
+            tools:text="Nature" />
+
+        <LinearLayout
+            android:id="@+id/widgetNext"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/bg_circle_widget_next">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_next"
+                android:tint="@android:color/white"
+                android:contentDescription="@string/widget_next" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</FrameLayout>

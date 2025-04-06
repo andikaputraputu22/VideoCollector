@@ -79,6 +79,10 @@ class CollectionActivity : AppCompatActivity() {
         binding.scrollToTop.setOnClickListener {
             binding.rvVideo.smoothScrollToPosition(0)
         }
+
+        binding.back.setOnClickListener {
+            finish()
+        }
     }
 
     private fun firstLoadVideo() {

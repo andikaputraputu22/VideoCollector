@@ -1,5 +1,6 @@
 <resources>
-    <string name="app_name">VideoCollector</string>
+    <string name="app_name">Vliloom</string>
+    <string name="app_name_uppercase">VLILOOM</string>
     <string name="home">Home</string>
     <string name="explore">Explore</string>
     <string name="favorite">Favorite</string>
@@ -49,4 +50,31 @@
     <string name="enable_notification_message">Enable notifications to get alerted when your video is ready.</string>
     <string name="allow">Allow</string>
     <string name="preparing_your_video">Preparing your video…</string>
+    <string name="widget_image">Widget Image</string>
+    <string name="widget_next">Widget Next</string>
+    <string name="trending_now">Trending Now</string>
+    <string name="version">Version</string>
+    <string name="customize_widget">Customize Widget</string>
+    <string name="clear_search_history">Clear Search History</string>
+    <string name="rate_us">Rate Us</string>
+    <string name="send_feedback">Send Feedback</string>
+    <string name="about">About</string>
+    <string name="menu">Menu</string>
+    <string name="sample_keyword">Example: nature, flower, etc.</string>
+    <string name="enter_keyword">Enter Keyword</string>
+    <string name="refresh_time">Refresh Time</string>
+    <string name="three_minutes">3 Minutes</string>
+    <string name="five_minutes">5 Minutes</string>
+    <string name="ten_minutes">10 Minutes</string>
+    <string name="all">All</string>
+    <string name="total_video">Total Video</string>
+    <string name="apply">Apply</string>
+    <string name="keyword_already_added">Keyword already added!</string>
+    <string name="keyword_already_max">Maximum 7 keywords can be added</string>
+    <string name="keyword_empty">Keyword not added yet</string>
+    <string name="sort">Sort</string>
+    <string name="random">Random</string>
+    <string name="sequence">Sequence</string>
+    <string name="setup_widget_success">Setup widget successfully</string>
+    <string name="setup_widget_failed">Setup widget failed</string>
 </resources>

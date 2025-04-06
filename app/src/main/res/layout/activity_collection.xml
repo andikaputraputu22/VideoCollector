@@ -8,21 +8,43 @@
     android:background="@color/bg_color"
     tools:context=".activities.CollectionActivity">
 
-    <TextView
-        android:id="@+id/title"
+    <LinearLayout
+        android:id="@+id/containerTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginHorizontal="16dp"
-        android:textColor="@android:color/white"
-        android:textSize="26sp"
-        android:maxLines="1"
-        android:ellipsize="end"
-        android:fontFamily="@font/montserrat_semibold"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Falling Leaves Videos" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/back"
+            android:src="@drawable/ic_back"
+            app:tint="@android:color/white" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:textColor="@android:color/white"
+            android:textSize="22sp"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:fontFamily="@font/montserrat_semibold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Falling Leaves Videos" />
+
+    </LinearLayout>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefresh"
@@ -33,7 +55,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title">
+        app:layout_constraintTop_toBottomOf="@+id/containerTitle">
 
         <FrameLayout
             android:layout_width="match_parent"

@@ -1,6 +1,6 @@
 package com.anankastudio.videocollector.viewmodels
 
-import android.app.Activity
+import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -149,8 +149,9 @@ class ExploreViewModel @Inject constructor(
         }
     }
 
-    fun hideKeyboard(activity: Activity) {
-        utils.hideKeyboard(activity)
+    fun hideKeyboard(view: View) {
+        view.clearFocus()
+        utils.hideKeyboard(view)
     }
 
     fun isFilterExist(): Boolean {

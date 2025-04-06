@@ -13,6 +13,11 @@ class SharedPreferencesManager @Inject constructor(
         const val FILTER_ORIENTATION = "filter_orientation"
         const val FILTER_SIZE = "filter_size"
         const val IS_FIRST_LAUNCH = "is_first_launch"
+
+        const val WIDGET_LIST_KEYWORD = "widget_list_keyword"
+        const val WIDGET_ORIENTATION = "widget_orientation"
+        const val WIDGET_SORT = "widget_sort"
+        const val WIDGET_TOTAL_VIDEO = "widget_total_video"
     }
 
     private val sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
@@ -31,5 +36,21 @@ class SharedPreferencesManager @Inject constructor(
 
     fun setBoolean(key: String, value: Boolean) {
         sharedPreferences.edit().putBoolean(key, value).apply()
+    }
+
+    fun getLong(key: String, defaultValue: Long = 0): Long {
+        return sharedPreferences.getLong(key, defaultValue)
+    }
+
+    fun setLong(key: String, value: Long) {
+        sharedPreferences.edit().putLong(key, value).apply()
+    }
+
+    fun getInt(key: String, defaultValue: Int = 0): Int {
+        return sharedPreferences.getInt(key, defaultValue)
+    }
+
+    fun setInt(key: String, value: Int) {
+        sharedPreferences.edit().putInt(key, value).apply()
     }
 }

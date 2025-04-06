@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.anankastudio.videocollector.models.Video
 import com.anankastudio.videocollector.repository.VideoRepository
+import com.anankastudio.videocollector.repository.WidgetRepository
 import com.anankastudio.videocollector.utilities.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -14,17 +15,38 @@ import kotlin.math.ceil
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val videoRepository: VideoRepository
+    private val videoRepository: VideoRepository,
+    private val widgetRepository: WidgetRepository
 ) : ViewModel() {
 
     var page = 1
     var pageTotal = 1
     val loading by lazy { MutableLiveData<Boolean>() }
     val loadingMore by lazy { MutableLiveData<Boolean>() }
+    val loadingWidget by lazy { MutableLiveData<Boolean>() }
     val isDataAvailable by lazy { MutableLiveData<Boolean>() }
+    val isWidgetSetupSuccess by lazy { MutableLiveData<Boolean>() }
 
     private val _listVideo = MutableLiveData<List<Video>?>()
     val listVideo: LiveData<List<Video>?> = _listVideo
+
+    fun getWidgetVideo() {
+        loadingWidget.value = true
+        viewModelScope.launch {
+            try {
+                when(widgetRepository.fetchWidgetVideo()) {
+                    is Result.Success -> {
+                        isWidgetSetupSuccess.value = true
+                    }
+                    is Result.Error -> {
+                        isWidgetSetupSuccess.value = false
+                    }
+                }
+            } finally {
+                loadingWidget.value = false
+            }
+        }
+    }
 
     fun getPopularVideo() {
         if (page > pageTotal) return
