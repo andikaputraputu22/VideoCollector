@@ -7,6 +7,7 @@ import android.text.Spanned
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
@@ -20,9 +21,11 @@ import com.anankastudio.videocollector.databinding.FragmentHomeBinding
 import com.anankastudio.videocollector.interfaces.OnClickCustomizeWidget
 import com.anankastudio.videocollector.interfaces.OnClickMenu
 import com.anankastudio.videocollector.interfaces.OnClickVideo
+import com.anankastudio.videocollector.utilities.CustomProgressDialog
 import com.anankastudio.videocollector.utilities.LetterSpacingSpan
 import com.anankastudio.videocollector.utilities.SpaceItemDecoration
 import com.anankastudio.videocollector.viewmodels.HomeViewModel
+import com.anankastudio.videocollector.widget.SlideWidgetHelper
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -34,6 +37,7 @@ class FragmentHome : Fragment(), OnClickMenu, OnClickCustomizeWidget {
     private val videoAdapter = VideoAdapter()
     private val menuBottomSheet = MenuBottomSheet()
     private val customizeWidgetBottomSheet = CustomizeWidgetBottomSheet()
+    private lateinit var progressDialog: CustomProgressDialog
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,6 +52,9 @@ class FragmentHome : Fragment(), OnClickMenu, OnClickCustomizeWidget {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        progressDialog = CustomProgressDialog(requireContext())
+        progressDialog.setCancelable(false)
+
         setupLogo()
         setupListVideo()
         setupClickListener()
@@ -57,7 +64,6 @@ class FragmentHome : Fragment(), OnClickMenu, OnClickCustomizeWidget {
             firstLoadVideo()
         }
         firstLoadVideo()
-        viewModel.getWidgetVideo()
     }
 
     private fun setupLogo() {
@@ -112,8 +118,29 @@ class FragmentHome : Fragment(), OnClickMenu, OnClickCustomizeWidget {
             binding.progressIndicator.visibility = if (it) View.VISIBLE else View.GONE
         }
 
+        viewModel.loadingWidget.observe(viewLifecycleOwner) {
+            if (it) progressDialog.show() else progressDialog.dismiss()
+        }
+
         viewModel.isDataAvailable.observe(viewLifecycleOwner) {
             binding.notFoundContainer.visibility = if (it) View.GONE else View.VISIBLE
+        }
+
+        viewModel.isWidgetSetupSuccess.observe(viewLifecycleOwner) {
+            if (it) {
+                SlideWidgetHelper.sendWidgetUpdateBroadcast(requireContext())
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.setup_widget_success),
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.setup_widget_failed),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
     }
 
@@ -133,6 +160,7 @@ class FragmentHome : Fragment(), OnClickMenu, OnClickCustomizeWidget {
     }
 
     private fun showCustomizeWidgetBottomSheet() {
+        customizeWidgetBottomSheet.listener = this
         customizeWidgetBottomSheet.show(
             childFragmentManager,
             CustomizeWidgetBottomSheet.TAG
@@ -172,7 +200,7 @@ class FragmentHome : Fragment(), OnClickMenu, OnClickCustomizeWidget {
     }
 
     override fun onClickApplyCustomize() {
-
+        viewModel.getWidgetVideo()
     }
 
     override fun onDestroyView() {

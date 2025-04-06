@@ -23,16 +23,28 @@ class HomeViewModel @Inject constructor(
     var pageTotal = 1
     val loading by lazy { MutableLiveData<Boolean>() }
     val loadingMore by lazy { MutableLiveData<Boolean>() }
+    val loadingWidget by lazy { MutableLiveData<Boolean>() }
     val isDataAvailable by lazy { MutableLiveData<Boolean>() }
+    val isWidgetSetupSuccess by lazy { MutableLiveData<Boolean>() }
 
     private val _listVideo = MutableLiveData<List<Video>?>()
     val listVideo: LiveData<List<Video>?> = _listVideo
 
     fun getWidgetVideo() {
+        loadingWidget.value = true
         viewModelScope.launch {
             try {
-                widgetRepository.fetchWidgetVideo("Landscape")
-            } catch (_: Exception) {}
+                when(widgetRepository.fetchWidgetVideo()) {
+                    is Result.Success -> {
+                        isWidgetSetupSuccess.value = true
+                    }
+                    is Result.Error -> {
+                        isWidgetSetupSuccess.value = false
+                    }
+                }
+            } finally {
+                loadingWidget.value = false
+            }
         }
     }
 

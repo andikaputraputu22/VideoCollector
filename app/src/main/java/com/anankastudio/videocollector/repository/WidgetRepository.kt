@@ -6,7 +6,7 @@ import com.anankastudio.videocollector.database.WidgetVideoDao
 import com.anankastudio.videocollector.models.PopularResponse
 import com.anankastudio.videocollector.models.room.WidgetVideo
 import com.anankastudio.videocollector.utilities.Result
-import com.anankastudio.videocollector.widget.SlideWidgetHelper
+import com.anankastudio.videocollector.utilities.SharedPreferencesManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -14,22 +14,30 @@ import javax.inject.Inject
 class WidgetRepository @Inject constructor(
     private val context: Context,
     private val apiService: ApiService,
-    private val widgetVideoDao: WidgetVideoDao
+    private val widgetVideoDao: WidgetVideoDao,
+    private val sharedPreferencesManager: SharedPreferencesManager
 ) {
 
-    suspend fun fetchWidgetVideo(
-        query: String = ""
-    ): Result<PopularResponse> = withContext(Dispatchers.IO) {
+    suspend fun fetchWidgetVideo(): Result<PopularResponse> = withContext(Dispatchers.IO) {
         try {
-            val response = apiService.getWidgetVideo(1, 7, query)
-            if (response.isSuccessful) {
-                response.body()?.let {
-                    saveVideoToDatabase(it)
-                    return@withContext Result.Success(it)
-                } ?: return@withContext Result.Error("Response body is null")
-            } else {
-                return@withContext Result.Error("Failed to fetch data: ${response.code()}")
+            val totalVideo = sharedPreferencesManager.getInt(SharedPreferencesManager.WIDGET_TOTAL_VIDEO, 15)
+            val orientation = sharedPreferencesManager.getString(SharedPreferencesManager.WIDGET_ORIENTATION)
+            val keywords = getKeywordWidget()
+            var lastSuccess: PopularResponse? = null
+
+            widgetVideoDao.deleteAllWidgetVideo()
+            keywords.forEach { keyword ->
+                val response = apiService.getWidgetVideo(1, totalVideo, keyword, orientation)
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        saveVideoToDatabase(it)
+                        lastSuccess = it
+                    }
+                }
             }
+
+            return@withContext lastSuccess?.let { Result.Success(it) }
+                ?: Result.Error("No successful results")
         } catch (e: Exception) {
             return@withContext Result.Error("Exception occurred: ${e.message}")
         }
@@ -47,8 +55,14 @@ class WidgetRepository @Inject constructor(
             }
         }.orEmpty()
 
-        widgetVideoDao.deleteAllWidgetVideo()
         widgetVideoDao.insertAllWidgetVideo(widgetVideos)
-        SlideWidgetHelper.sendWidgetUpdateBroadcast(context)
+    }
+
+    private fun getKeywordWidget(): List<String> {
+        val stringKeyword = sharedPreferencesManager.getString(SharedPreferencesManager.WIDGET_LIST_KEYWORD)
+        val listKeyword = if (stringKeyword.isEmpty()) arrayListOf()
+        else stringKeyword.split("#").toCollection(ArrayList())
+
+        return listKeyword
     }
 }

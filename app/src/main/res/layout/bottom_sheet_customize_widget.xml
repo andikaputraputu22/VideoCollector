@@ -161,7 +161,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
         android:layout_marginTop="24dp"
-        android:text="@string/refresh_time"
+        android:text="@string/sort"
         android:textColor="@android:color/white"
         android:textSize="14sp"
         android:fontFamily="@font/montserrat_medium" />
@@ -173,13 +173,14 @@
         android:layout_marginTop="8dp"
         android:baselineAligned="false"
         android:orientation="horizontal"
-        android:weightSum="3"
+        android:weightSum="2"
         android:gravity="center_vertical">
 
         <LinearLayout
-            android:id="@+id/refreshTime3"
+            android:id="@+id/sortSequence"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
             android:layout_weight="1"
             android:paddingVertical="12dp"
             android:gravity="center"
@@ -188,7 +189,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/three_minutes"
+                android:text="@string/sequence"
                 android:textColor="@android:color/white"
                 android:textSize="14sp"
                 android:fontFamily="@font/montserrat_regular" />
@@ -196,29 +197,10 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/refreshTime5"
+            android:id="@+id/sortRandom"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingVertical="12dp"
-            android:layout_marginHorizontal="8dp"
-            android:gravity="center"
-            android:background="@drawable/bg_filter">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/five_minutes"
-                android:textColor="@android:color/white"
-                android:textSize="14sp"
-                android:fontFamily="@font/montserrat_regular" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/refreshTime10"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
             android:layout_weight="1"
             android:paddingVertical="12dp"
             android:gravity="center"
@@ -227,7 +209,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/ten_minutes"
+                android:text="@string/random"
                 android:textColor="@android:color/white"
                 android:textSize="14sp"
                 android:fontFamily="@font/montserrat_regular" />

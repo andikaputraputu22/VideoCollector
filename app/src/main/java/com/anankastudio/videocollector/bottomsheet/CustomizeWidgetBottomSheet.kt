@@ -19,6 +19,7 @@ import com.anankastudio.videocollector.adapters.KeywordWidgetAdapter
 import com.anankastudio.videocollector.databinding.BottomSheetCustomizeWidgetBinding
 import com.anankastudio.videocollector.interfaces.OnClickCustomizeWidget
 import com.anankastudio.videocollector.interfaces.OnSelectKeywordWidget
+import com.anankastudio.videocollector.utilities.Constants
 import com.anankastudio.videocollector.utilities.SharedPreferencesManager
 import com.anankastudio.videocollector.utilities.SpaceItemDecoration
 import com.anankastudio.videocollector.utilities.Utils
@@ -50,7 +51,7 @@ class CustomizeWidgetBottomSheet : BottomSheetDialogFragment() {
     var totalVideo = minValueTotalVideo
     var listKeyword: ArrayList<String> = arrayListOf()
     var orientation: String = ""
-    var refreshTime: Long = 180000
+    var sort = Constants.SORT_SEQUENCE
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -79,7 +80,7 @@ class CustomizeWidgetBottomSheet : BottomSheetDialogFragment() {
         updateClearButtonVisibility()
 
         val stringKeyword = sharedPreferencesManager.getString(SharedPreferencesManager.WIDGET_LIST_KEYWORD)
-        listKeyword = if (stringKeyword.isNullOrEmpty()) arrayListOf()
+        listKeyword = if (stringKeyword.isEmpty()) arrayListOf()
         else stringKeyword.split("#").toCollection(ArrayList())
 
         setupCustomize()
@@ -89,7 +90,7 @@ class CustomizeWidgetBottomSheet : BottomSheetDialogFragment() {
 
     private fun setupCustomize() {
         val orientation = sharedPreferencesManager.getString(SharedPreferencesManager.WIDGET_ORIENTATION)
-        val refreshTime = sharedPreferencesManager.getLong(SharedPreferencesManager.WIDGET_REFRESH_TIME, 180000)
+        val sort = sharedPreferencesManager.getInt(SharedPreferencesManager.WIDGET_SORT, Constants.SORT_SEQUENCE)
         val totalShowingVideo = sharedPreferencesManager.getInt(SharedPreferencesManager.WIDGET_TOTAL_VIDEO, 15)
 
         with(binding) {
@@ -110,14 +111,13 @@ class CustomizeWidgetBottomSheet : BottomSheetDialogFragment() {
                 )
             }
 
-            val containerRefreshTime = mapOf(
-                refreshTime3 to 180000L,
-                refreshTime5 to 300000L,
-                refreshTime10 to 600000L
+            val containerSort = mapOf(
+                sortSequence to Constants.SORT_SEQUENCE,
+                sortRandom to Constants.SORT_RANDOM
             )
-            containerRefreshTime.forEach { (linearLayout, value) ->
+            containerSort.forEach { (linearLayout, value) ->
                 linearLayout.setBackgroundResource(
-                    if (value == refreshTime) R.drawable.bg_filter_selected
+                    if (value == sort) R.drawable.bg_filter_selected
                     else R.drawable.bg_filter
                 )
             }
@@ -185,15 +185,14 @@ class CustomizeWidgetBottomSheet : BottomSheetDialogFragment() {
             }
         }
 
-        val containerRefreshTime = mapOf(
-            binding.refreshTime3 to 180000L,
-            binding.refreshTime5 to 300000L,
-            binding.refreshTime10 to 600000L
+        val containerSort = mapOf(
+            binding.sortSequence to Constants.SORT_SEQUENCE,
+            binding.sortRandom to Constants.SORT_RANDOM
         )
-        containerRefreshTime.forEach { (linearLayout, value) ->
+        containerSort.forEach { (linearLayout, value) ->
             linearLayout.setOnClickListener {
-                refreshTime = value
-                containerRefreshTime.keys.forEach { ly ->
+                sort = value
+                containerSort.keys.forEach { ly ->
                     ly.setBackgroundResource(
                         if (ly == linearLayout) R.drawable.bg_filter_selected
                         else R.drawable.bg_filter
@@ -207,9 +206,17 @@ class CustomizeWidgetBottomSheet : BottomSheetDialogFragment() {
         }
 
         binding.apply.setOnClickListener {
-            saveCustomizeWidget()
-            listener?.onClickApplyCustomize()
-            dismiss()
+            if (listKeyword.size > 0) {
+                saveCustomizeWidget()
+                listener?.onClickApplyCustomize()
+                dismiss()
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    requireContext().getString(R.string.keyword_empty),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
     }
 
@@ -235,6 +242,15 @@ class CustomizeWidgetBottomSheet : BottomSheetDialogFragment() {
 
     private fun addKeyword() {
         val keyword = binding.inputKeyword.text.toString()
+        if (listKeyword.size == 7) {
+            Toast.makeText(
+                requireContext(),
+                requireContext().getString(R.string.keyword_already_max),
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+
         if (keyword.isNotBlank()) {
             binding.inputKeyword.clearFocus()
             if (listKeyword.none { it.equals(keyword, ignoreCase = true) }) {
@@ -255,7 +271,7 @@ class CustomizeWidgetBottomSheet : BottomSheetDialogFragment() {
     private fun saveCustomizeWidget() {
         sharedPreferencesManager.setString(SharedPreferencesManager.WIDGET_LIST_KEYWORD, listKeyword.joinToString("#"))
         sharedPreferencesManager.setString(SharedPreferencesManager.WIDGET_ORIENTATION, orientation)
-        sharedPreferencesManager.setLong(SharedPreferencesManager.WIDGET_REFRESH_TIME, refreshTime)
+        sharedPreferencesManager.setInt(SharedPreferencesManager.WIDGET_SORT, sort)
         sharedPreferencesManager.setInt(SharedPreferencesManager.WIDGET_TOTAL_VIDEO, totalVideo)
     }
 

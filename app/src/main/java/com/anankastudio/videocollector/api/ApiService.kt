@@ -46,6 +46,7 @@ interface ApiService {
     suspend fun getWidgetVideo(
         @Query("page") page: Int,
         @Query("per_page") perPage: Int,
-        @Query("query") query: String
+        @Query("query") query: String,
+        @Query("orientation") orientation: String
     ): Response<PopularResponse>
 }
