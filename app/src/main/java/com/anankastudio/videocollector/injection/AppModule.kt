@@ -41,9 +41,10 @@ object AppModule {
     fun provideWidgetRepository(
         @ApplicationContext context: Context,
         apiService: ApiService,
-        widgetVideoDao: WidgetVideoDao
+        widgetVideoDao: WidgetVideoDao,
+        sharedPreferencesManager: SharedPreferencesManager
     ): WidgetRepository {
-        return WidgetRepository(context, apiService, widgetVideoDao)
+        return WidgetRepository(context, apiService, widgetVideoDao, sharedPreferencesManager)
     }
 
     @Singleton

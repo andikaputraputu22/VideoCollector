@@ -70,4 +70,11 @@
     <string name="total_video">Total Video</string>
     <string name="apply">Apply</string>
     <string name="keyword_already_added">Keyword already added!</string>
+    <string name="keyword_already_max">Maximum 7 keywords can be added</string>
+    <string name="keyword_empty">Keyword not added yet</string>
+    <string name="sort">Sort</string>
+    <string name="random">Random</string>
+    <string name="sequence">Sequence</string>
+    <string name="setup_widget_success">Setup widget successfully</string>
+    <string name="setup_widget_failed">Setup widget failed</string>
 </resources>

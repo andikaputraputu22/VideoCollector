@@ -16,7 +16,7 @@ class SharedPreferencesManager @Inject constructor(
 
         const val WIDGET_LIST_KEYWORD = "widget_list_keyword"
         const val WIDGET_ORIENTATION = "widget_orientation"
-        const val WIDGET_REFRESH_TIME = "widget_refresh_time"
+        const val WIDGET_SORT = "widget_sort"
         const val WIDGET_TOTAL_VIDEO = "widget_total_video"
     }
 
