@@ -41,6 +41,7 @@ class HomeViewModel @Inject constructor(
                     is Result.Error -> {
                         isWidgetSetupSuccess.value = false
                     }
+                    is Result.Loading -> {}
                 }
             } finally {
                 loadingWidget.value = false
@@ -69,6 +70,7 @@ class HomeViewModel @Inject constructor(
                         pageTotal = -1
                         isDataAvailable.value = false
                     }
+                    is Result.Loading -> {}
                 }
             } finally {
                 loading.value = false

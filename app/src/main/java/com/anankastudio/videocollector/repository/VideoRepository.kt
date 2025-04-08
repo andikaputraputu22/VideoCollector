@@ -20,6 +20,11 @@ import com.anankastudio.videocollector.utilities.Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -156,6 +161,40 @@ class VideoRepository @Inject constructor(
             Result.Error("Empty collection")
         }
     }
+
+    fun fetchDetailVideo2(id: Long): Flow<Result<DetailVideo>> = flow {
+        emit(Result.Loading)
+        val cached = detailVideoDao.getVideoById(id)
+        val isExpired = cached?.let {
+            System.currentTimeMillis() - it.timestamp > 10 * 60 * 1000
+        } ?: true
+
+        if (cached != null && !isExpired) {
+            emitAll(
+                detailVideoDao.getVideoByIdFlow(id)
+                    .map { Result.Success(it) }
+            )
+            return@flow
+        }
+
+        try {
+            val response = apiService.getDetailVideo(id.toString())
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    saveVideoToDatabase(it)
+                } ?: emit(Result.Error("Response body is null"))
+            } else {
+                emit(Result.Error("Failed: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            emit(Result.Error("Exception: ${e.message}"))
+        }
+
+        emitAll(
+            detailVideoDao.getVideoByIdFlow(id)
+                .map { Result.Success(it) }
+        )
+    }.flowOn(Dispatchers.IO)
 
     suspend fun fetchDetailVideo(id: Long): Result<DetailVideo?> = withContext(Dispatchers.IO) {
         try {

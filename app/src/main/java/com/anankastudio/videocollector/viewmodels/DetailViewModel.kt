@@ -15,6 +15,9 @@ import com.anankastudio.videocollector.repository.VideoRepository
 import com.anankastudio.videocollector.utilities.Result
 import com.anankastudio.videocollector.utilities.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -40,9 +43,26 @@ class DetailViewModel @Inject constructor(
     private val _downloadStatus = MutableLiveData<ResultStatus>()
     val downloadStatus: LiveData<ResultStatus> = _downloadStatus
 
+    private val _videoState = MutableStateFlow<Result<DetailVideo>>(Result.Loading)
+    val videoState: StateFlow<Result<DetailVideo>> = _videoState.asStateFlow()
+
     var dataDetailVideo: DetailVideo? = null
     var onFavorite: Boolean = false
     var onShareFileVideo: Boolean = false
+
+    fun getDetailVideo2(id: Long) {
+        viewModelScope.launch {
+            videoRepository.fetchDetailVideo2(id)
+                .collect { result ->
+                    _videoState.value = result
+                    if (result is Result.Success) {
+                        dataDetailVideo = result.data
+                        checkVideoOnFavorite(result.data.id)
+                        setupContentDetail(result.data)
+                    }
+                }
+        }
+    }
 
     fun getDetailVideo(id: Long) {
         loading.value = true
@@ -57,6 +77,9 @@ class DetailViewModel @Inject constructor(
                         setupContentDetail(data)
                     }
                     is Result.Error -> {
+
+                    }
+                    is Result.Loading -> {
 
                     }
                 }

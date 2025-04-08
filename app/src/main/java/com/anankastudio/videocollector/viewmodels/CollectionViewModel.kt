@@ -48,6 +48,7 @@ class CollectionViewModel @Inject constructor(
                         pageTotal = -1
                         isDataAvailable.value = false
                     }
+                    is Result.Loading -> {}
                 }
             } finally {
                 loading.value = false

@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.anankastudio.videocollector.models.room.DetailVideo
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface DetailVideoDao {
@@ -17,4 +18,7 @@ interface DetailVideoDao {
 
     @Query("SELECT * FROM detail_video WHERE id = :id")
     suspend fun getVideoById(id: Long): DetailVideo?
+
+    @Query("SELECT * FROM detail_video WHERE id = :id")
+    fun getVideoByIdFlow(id: Long): Flow<DetailVideo>
 }

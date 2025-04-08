@@ -2,6 +2,7 @@ package com.anankastudio.videocollector.activities
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.WindowInsetsController
 import android.view.animation.Animation
@@ -11,6 +12,9 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.anankastudio.videocollector.R
 import com.anankastudio.videocollector.adapters.DetailVideoAdapter
@@ -22,11 +26,14 @@ import com.anankastudio.videocollector.interfaces.OnClickDownload
 import com.anankastudio.videocollector.interfaces.OnClickMoreFeature
 import com.anankastudio.videocollector.models.item.ContentDetailProfile
 import com.anankastudio.videocollector.utilities.CustomProgressDialog
+import com.anankastudio.videocollector.utilities.Result
 import com.anankastudio.videocollector.utilities.Utils
 import com.anankastudio.videocollector.utilities.VideoPlayerManager
 import com.anankastudio.videocollector.viewmodels.DetailViewModel
 import com.anankastudio.videocollector.viewmodels.ResultStatus
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -60,7 +67,7 @@ class DetailVideoActivity : AppCompatActivity(), OnClickDownload, OnClickMoreFea
         setupListDetail()
         setupClickListener()
         observeData()
-        viewModel.getDetailVideo(idVideo)
+        viewModel.getDetailVideo2(idVideo)
     }
 
     private fun setupStatusBar() {
@@ -145,21 +152,51 @@ class DetailVideoActivity : AppCompatActivity(), OnClickDownload, OnClickMoreFea
     }
 
     private fun observeData() {
-        viewModel.loading.observe(this) {
-            if (it) {
-                binding.contentContainer.visibility = View.GONE
-                binding.shimmerContainer.visibility = View.VISIBLE
-                binding.shimmerContainer.startAnimation(shimmerAnimation)
-            } else {
-                binding.contentContainer.visibility = View.VISIBLE
-                binding.shimmerContainer.visibility = View.GONE
-                binding.shimmerContainer.clearAnimation()
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.videoState.collect { state ->
+                    when(state) {
+                        is Result.Loading -> {
+                            binding.contentContainer.visibility = View.GONE
+                            binding.shimmerContainer.visibility = View.VISIBLE
+                            binding.shimmerContainer.startAnimation(shimmerAnimation)
+                            Log.e("Anjay", "Hasilnya")
+                        }
+                        is Result.Success -> {
+                            binding.contentContainer.visibility = View.VISIBLE
+                            binding.shimmerContainer.visibility = View.GONE
+                            binding.shimmerContainer.clearAnimation()
+                            Log.e("Anjay", "Hasilnya2")
+
+                            val video = state.data
+                            binding.title.text = video.userName
+                        }
+                        is Result.Error -> {
+                            binding.contentContainer.visibility = View.VISIBLE
+                            binding.shimmerContainer.visibility = View.GONE
+                            binding.shimmerContainer.clearAnimation()
+                            Log.e("Anjay", "Hasilnya3")
+                        }
+                    }
+                }
             }
         }
 
-        viewModel.title.observe(this) {
-            binding.title.text = it
-        }
+//        viewModel.loading.observe(this) {
+//            if (it) {
+//                binding.contentContainer.visibility = View.GONE
+//                binding.shimmerContainer.visibility = View.VISIBLE
+//                binding.shimmerContainer.startAnimation(shimmerAnimation)
+//            } else {
+//                binding.contentContainer.visibility = View.VISIBLE
+//                binding.shimmerContainer.visibility = View.GONE
+//                binding.shimmerContainer.clearAnimation()
+//            }
+//        }
+//
+//        viewModel.title.observe(this) {
+//            binding.title.text = it
+//        }
 
         viewModel.listContent.observe(this) {
             adapter.setData(it)
