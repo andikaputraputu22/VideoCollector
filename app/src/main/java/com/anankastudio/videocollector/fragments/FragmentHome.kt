@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.anankastudio.videocollector.R
+import com.anankastudio.videocollector.activities.AboutActivity
 import com.anankastudio.videocollector.activities.DetailVideoActivity
 import com.anankastudio.videocollector.adapters.VideoAdapter
 import com.anankastudio.videocollector.bottomsheet.CustomizeWidgetBottomSheet
@@ -153,6 +154,7 @@ class FragmentHome : Fragment(), OnClickMenu, OnClickCustomizeWidget {
     }
 
     private fun showMenuBottomSheet() {
+        menuBottomSheet.listener = this
         menuBottomSheet.show(
             childFragmentManager,
             MenuBottomSheet.TAG
@@ -196,7 +198,26 @@ class FragmentHome : Fragment(), OnClickMenu, OnClickCustomizeWidget {
     }
 
     override fun onClickSendFeedback() {
+        viewModel.sendEmailFeedback(requireContext())
+    }
 
+    override fun onClickPrivacyPolicy() {
+        viewModel.showExternalBrowser(
+            "https://github.com/andikaputraputu22",
+            requireContext()
+        )
+    }
+
+    override fun onClickTermsOfUse() {
+        viewModel.showExternalBrowser(
+            "https://github.com/andikaputraputu22",
+            requireContext()
+        )
+    }
+
+    override fun onClickAbout() {
+        val intent = Intent(requireContext(), AboutActivity::class.java)
+        startActivity(intent)
     }
 
     override fun onClickApplyCustomize() {

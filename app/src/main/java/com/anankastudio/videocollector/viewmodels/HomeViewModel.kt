@@ -1,5 +1,6 @@
 package com.anankastudio.videocollector.viewmodels
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,6 +9,7 @@ import com.anankastudio.videocollector.models.Video
 import com.anankastudio.videocollector.repository.VideoRepository
 import com.anankastudio.videocollector.repository.WidgetRepository
 import com.anankastudio.videocollector.utilities.Result
+import com.anankastudio.videocollector.utilities.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -16,7 +18,8 @@ import kotlin.math.ceil
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val videoRepository: VideoRepository,
-    private val widgetRepository: WidgetRepository
+    private val widgetRepository: WidgetRepository,
+    private val utils: Utils
 ) : ViewModel() {
 
     var page = 1
@@ -82,5 +85,13 @@ class HomeViewModel @Inject constructor(
             loadingMore.value = true
             getPopularVideo()
         }
+    }
+
+    fun sendEmailFeedback(context: Context) {
+        utils.sendFeedback(context)
+    }
+
+    fun showExternalBrowser(url: String, context: Context) {
+        utils.openExternalBrowser(url, context)
     }
 }

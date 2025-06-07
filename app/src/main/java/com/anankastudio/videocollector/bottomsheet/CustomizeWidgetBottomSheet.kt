@@ -46,12 +46,12 @@ class CustomizeWidgetBottomSheet : BottomSheetDialogFragment() {
     private lateinit var dialog: BottomSheetDialog
     private lateinit var keywordWidgetAdapter: KeywordWidgetAdapter
     private var clearButtonDrawable: Drawable? = null
+    private var sort = Constants.SORT_SEQUENCE
     var listener: OnClickCustomizeWidget? = null
     val minValueTotalVideo = 15
     var totalVideo = minValueTotalVideo
     var listKeyword: ArrayList<String> = arrayListOf()
     var orientation: String = ""
-    var sort = Constants.SORT_SEQUENCE
 
     override fun onCreateView(
         inflater: LayoutInflater,
