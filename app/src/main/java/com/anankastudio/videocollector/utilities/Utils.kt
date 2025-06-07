@@ -148,4 +148,25 @@ class Utils {
         }
         context.startActivity(intent)
     }
+
+    fun sendFeedback(context: Context) {
+        val recipient = "andikaputraputu.dev@gmail.com"
+        val subject = "Vliloom Feedback"
+
+        val intent = Intent(Intent.ACTION_SENDTO).apply {
+            data = Uri.parse("mailto:")
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(recipient))
+            putExtra(Intent.EXTRA_SUBJECT, subject)
+        }
+
+        if (intent.resolveActivity(context.packageManager) != null) {
+            context.startActivity(intent)
+        } else {
+            Toast.makeText(
+                context,
+                "No email application installed",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
 }

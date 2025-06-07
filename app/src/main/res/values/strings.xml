@@ -60,7 +60,7 @@
     <string name="send_feedback">Send Feedback</string>
     <string name="about">About</string>
     <string name="menu">Menu</string>
-    <string name="sample_keyword">Example: nature, flower, etc.</string>
+    <string name="sample_keyword">Example: flower</string>
     <string name="enter_keyword">Enter Keyword</string>
     <string name="refresh_time">Refresh Time</string>
     <string name="three_minutes">3 Minutes</string>
@@ -77,4 +77,6 @@
     <string name="sequence">Sequence</string>
     <string name="setup_widget_success">Setup widget successfully</string>
     <string name="setup_widget_failed">Setup widget failed</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="terms_of_use">Terms of Use</string>
 </resources>

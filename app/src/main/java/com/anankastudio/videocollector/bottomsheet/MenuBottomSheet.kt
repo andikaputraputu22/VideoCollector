@@ -52,6 +52,21 @@ class MenuBottomSheet : BottomSheetDialogFragment() {
             listener?.onClickSendFeedback()
             dismiss()
         }
+
+        binding.privacyPolicy.setOnClickListener {
+            listener?.onClickPrivacyPolicy()
+            dismiss()
+        }
+
+        binding.termsOfUse.setOnClickListener {
+            listener?.onClickTermsOfUse()
+            dismiss()
+        }
+
+        binding.about.setOnClickListener {
+            listener?.onClickAbout()
+            dismiss()
+        }
     }
 
     override fun onDestroyView() {
