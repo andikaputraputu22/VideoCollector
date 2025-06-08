@@ -161,7 +161,18 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/header"
-            app:layout_constraintBottom_toTopOf="@+id/actionContainer" />
+            app:layout_constraintBottom_toTopOf="@+id/bannerView" />
+
+        <com.huawei.hms.ads.banner.BannerView
+            android:id="@+id/bannerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/actionContainer"
+            app:layout_constraintTop_toBottomOf="@+id/rvDetail" />
 
         <LinearLayout
             android:id="@+id/actionContainer"
@@ -175,7 +186,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rvDetail">
+            app:layout_constraintTop_toBottomOf="@+id/bannerView">
 
             <LinearLayout
                 android:id="@+id/actionDownload"

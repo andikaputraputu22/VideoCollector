@@ -21,7 +21,9 @@ import com.anankastudio.videocollector.interfaces.OnClickCreator
 import com.anankastudio.videocollector.interfaces.OnClickDownload
 import com.anankastudio.videocollector.interfaces.OnClickMoreFeature
 import com.anankastudio.videocollector.models.item.ContentDetailProfile
+import com.anankastudio.videocollector.utilities.BannerAdSizeHelper
 import com.anankastudio.videocollector.utilities.CustomProgressDialog
+import com.anankastudio.videocollector.utilities.PetalAdsHelper
 import com.anankastudio.videocollector.utilities.Utils
 import com.anankastudio.videocollector.utilities.VideoPlayerManager
 import com.anankastudio.videocollector.viewmodels.DetailViewModel
@@ -35,6 +37,9 @@ class DetailVideoActivity : AppCompatActivity(), OnClickDownload, OnClickMoreFea
     @Inject
     lateinit var utils: Utils
 
+    @Inject
+    lateinit var petalAdsHelper: PetalAdsHelper
+
     private lateinit var binding: ActivityDetailVideoBinding
     private val viewModel: DetailViewModel by viewModels()
     private var idVideo = 0L
@@ -45,6 +50,7 @@ class DetailVideoActivity : AppCompatActivity(), OnClickDownload, OnClickMoreFea
     private val moreFeatureBottomSheet = MoreFeatureBottomSheet()
     private lateinit var progressDialog: CustomProgressDialog
     private var urlDownload = ""
+    private lateinit var bannerHelper: PetalAdsHelper.BannerHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +65,7 @@ class DetailVideoActivity : AppCompatActivity(), OnClickDownload, OnClickMoreFea
         setupStatusBar()
         setupListDetail()
         setupClickListener()
+        setupBannerAd()
         observeData()
         viewModel.getDetailVideo(idVideo)
     }
@@ -142,6 +149,22 @@ class DetailVideoActivity : AppCompatActivity(), OnClickDownload, OnClickMoreFea
             supportFragmentManager,
             MoreFeatureBottomSheet.TAG
         )
+    }
+
+    private fun setupBannerAd() {
+        bannerHelper = petalAdsHelper.createBannerHelper(binding.bannerView)
+            .setAdConfiguration(
+                adId = "testw6vs28auh3",
+                bannerAdSize = BannerAdSizeHelper.getRecommendedBannerSize(this@DetailVideoActivity),
+                refreshIntervalSeconds = 60
+            )
+            .loadAd(
+                onAdLoaded = {},
+                onAdFailed = {},
+                onAdClicked = {}
+            )
+
+        lifecycle.addObserver(bannerHelper)
     }
 
     private fun observeData() {
