@@ -98,7 +98,6 @@ class FragmentHome : Fragment(), OnClickMenu, OnClickCustomizeWidget {
     private fun firstLoadVideo() {
         if (viewModel.loading.value == true
             || viewModel.loadingMore.value == true) return
-        videoAdapter.clear()
         viewModel.page = 1
         viewModel.pageTotal = 1
         viewModel.getPopularVideo()
@@ -107,7 +106,12 @@ class FragmentHome : Fragment(), OnClickMenu, OnClickCustomizeWidget {
     private fun observeData() {
         viewModel.listVideo.observe(viewLifecycleOwner) {
             it?.let { listVideo ->
-                videoAdapter.setData(listVideo)
+                if (viewModel.page == 1) {
+                    videoAdapter.setFirstData(listVideo)
+                } else {
+                    videoAdapter.setData(listVideo)
+                }
+                viewModel.page++
             }
         }
 

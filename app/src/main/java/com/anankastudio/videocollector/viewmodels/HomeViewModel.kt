@@ -66,7 +66,6 @@ class HomeViewModel @Inject constructor(
                         val listVideo = data.videos
                         isDataAvailable.value = listVideo?.isNotEmpty()
                         _listVideo.postValue(listVideo)
-                        page++
                     }
                     is Result.Error -> {
                         pageTotal = -1
