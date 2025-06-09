@@ -10,6 +10,7 @@ import com.anankastudio.videocollector.repository.MediaRepository
 import com.anankastudio.videocollector.repository.VideoRepository
 import com.anankastudio.videocollector.repository.WidgetRepository
 import com.anankastudio.videocollector.utilities.NotificationManager
+import com.anankastudio.videocollector.utilities.PetalAdsHelper
 import com.anankastudio.videocollector.utilities.SharedPreferencesManager
 import com.anankastudio.videocollector.utilities.Utils
 import dagger.Module
@@ -75,5 +76,11 @@ object AppModule {
     @Provides
     fun provideSharedPreferencesManager(@ApplicationContext context: Context): SharedPreferencesManager {
         return SharedPreferencesManager(context)
+    }
+
+    @Singleton
+    @Provides
+    fun providePetalAdsHelper(): PetalAdsHelper {
+        return PetalAdsHelper()
     }
 }

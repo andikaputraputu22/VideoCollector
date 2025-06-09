@@ -7,6 +7,8 @@ plugins {
     id("kotlin-parcelize")
 }
 
+apply(plugin = "com.huawei.agconnect")
+
 android {
     namespace = "com.anankastudio.videocollector"
     compileSdk = 34
@@ -70,6 +72,8 @@ dependencies {
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     implementation(libs.hilt.android)
+    implementation(libs.huawei.agconnect.core)
+    implementation(libs.huawei.ads.prime)
     kapt(libs.hilt.compiler)
     ksp(libs.room.compiler)
     annotationProcessor(libs.glide.compiler)
