@@ -13,6 +13,7 @@ import com.anankastudio.videocollector.models.room.DetailVideo
 import com.anankastudio.videocollector.repository.MediaRepository
 import com.anankastudio.videocollector.repository.VideoRepository
 import com.anankastudio.videocollector.utilities.Result
+import com.anankastudio.videocollector.utilities.SharedPreferencesManager
 import com.anankastudio.videocollector.utilities.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -22,7 +23,8 @@ import javax.inject.Inject
 class DetailViewModel @Inject constructor(
     private val videoRepository: VideoRepository,
     private val mediaRepository: MediaRepository,
-    private val utils: Utils
+    private val utils: Utils,
+    private val sharedPreferencesManager: SharedPreferencesManager
 ) : ViewModel() {
 
     private val contents: MutableList<DetailPage> = mutableListOf()
@@ -43,6 +45,9 @@ class DetailViewModel @Inject constructor(
     var dataDetailVideo: DetailVideo? = null
     var onFavorite: Boolean = false
     var onShareFileVideo: Boolean = false
+
+    private val minTimeBeforeAd = 1 * 60 * 1000L
+    private val clicksBeforeAd = 3
 
     fun getDetailVideo(id: Long) {
         loading.value = true
@@ -166,6 +171,60 @@ class DetailViewModel @Inject constructor(
 
     fun showCreatorProfile(url: String, context: Context) {
         utils.openExternalBrowser(url, context)
+    }
+
+    // Interstitial Ads
+    fun markFirstAdShown() {
+        val currentTime = System.currentTimeMillis()
+        sharedPreferencesManager.apply {
+            setBoolean(SharedPreferencesManager.INTERSTITIAL_FIRST_AD_SHOWN, true)
+            setLong(SharedPreferencesManager.INTERSTITIAL_LAST_AD_TIME, currentTime)
+            setInt(SharedPreferencesManager.INTERSTITIAL_CLICK_COUNT, 0)
+        }
+    }
+
+    fun resetAdTrigger() {
+        val currentTime = System.currentTimeMillis()
+        sharedPreferencesManager.apply {
+            setLong(SharedPreferencesManager.INTERSTITIAL_LAST_AD_TIME, currentTime)
+            setInt(SharedPreferencesManager.INTERSTITIAL_CLICK_COUNT, 0)
+        }
+    }
+
+    fun isFirstTimeAdShown() = sharedPreferencesManager.getBoolean(
+        SharedPreferencesManager.INTERSTITIAL_FIRST_AD_SHOWN,
+        false
+    )
+
+    fun getClickCount() = sharedPreferencesManager.getInt(
+        SharedPreferencesManager.INTERSTITIAL_CLICK_COUNT,
+        0
+    )
+
+    private fun getLastAdTime() = sharedPreferencesManager.getLong(
+        SharedPreferencesManager.INTERSTITIAL_LAST_AD_TIME,
+        0
+    )
+
+    fun setClickCount(count: Int) {
+        sharedPreferencesManager.setInt(SharedPreferencesManager.INTERSTITIAL_CLICK_COUNT, count)
+    }
+
+    fun shouldShowInterstitial(): Boolean {
+        val isFirstTime = !isFirstTimeAdShown()
+        if (isFirstTime) {
+            return false
+        }
+
+        val currentTime = System.currentTimeMillis()
+        val lastAdTime = getLastAdTime()
+        val clickCount = getClickCount()
+
+        val timeElapsed = currentTime - lastAdTime
+        val timeConditionMet = timeElapsed >= minTimeBeforeAd
+        val clickConditionMet = clickCount >= clicksBeforeAd
+
+        return timeConditionMet && clickConditionMet
     }
 }
 

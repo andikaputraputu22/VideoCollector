@@ -1,10 +1,13 @@
 package com.anankastudio.videocollector.utilities
 
+import android.app.Activity
+import android.content.Context
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.huawei.hms.ads.AdListener
 import com.huawei.hms.ads.AdParam
 import com.huawei.hms.ads.BannerAdSize
+import com.huawei.hms.ads.InterstitialAd
 import com.huawei.hms.ads.banner.BannerView
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -18,6 +21,10 @@ class PetalAdsHelper @Inject constructor() {
 
     fun createBannerHelper(bannerView: BannerView): BannerHelper {
         return BannerHelper(bannerView)
+    }
+
+    fun createInterstitialHelper(context: Context): InterstitialHelper {
+        return InterstitialHelper(context)
     }
 
     inner class BannerHelper(private val bannerView: BannerView): DefaultLifecycleObserver {
@@ -90,6 +97,95 @@ class PetalAdsHelper @Inject constructor() {
         override fun onDestroy(owner: LifecycleOwner) {
             super.onDestroy(owner)
             bannerView.destroy()
+        }
+    }
+
+    inner class InterstitialHelper(private val context: Context): DefaultLifecycleObserver {
+        private var interstitialAd: InterstitialAd? = null
+        private var adId: String? = null
+
+        private var adLoadedCallback: (() -> Unit)? = null
+        private var adFailedCallback: ((Int) -> Unit)? = null
+        private var adClosedCallback: (() -> Unit)? = null
+        private var adClickedCallback: (() -> Unit)? = null
+        private var adShownCallback: (() -> Unit)? = null
+
+
+        fun setAdConfiguration(adId: String): InterstitialHelper {
+            this.adId = adId
+            return this
+        }
+
+        fun loadAd(
+            onAdLoaded: (() -> Unit)? = null,
+            onAdFailed: ((errorCode: Int) -> Unit)? = null,
+            onAdClicked: (() -> Unit)? = null,
+            onAdClosed: (() -> Unit)? = null,
+            onAdShown: (() -> Unit)? = null
+        ): InterstitialHelper {
+            this.adLoadedCallback = onAdLoaded
+            this.adFailedCallback = onAdFailed
+            this.adClickedCallback = onAdClicked
+            this.adClosedCallback = onAdClosed
+            this.adShownCallback = onAdShown
+
+            loadInterstitialAd()
+
+            return this
+        }
+
+        private fun loadInterstitialAd() {
+            val adId = this.adId ?: return
+            interstitialAd = InterstitialAd(context).apply {
+                this.adId = adId
+                adListener = object : AdListener() {
+                    override fun onAdLoaded() {
+                        adLoadedCallback?.invoke()
+                    }
+
+                    override fun onAdFailed(errorCode: Int) {
+                        adFailedCallback?.invoke(errorCode)
+                    }
+
+                    override fun onAdClicked() {
+                        adClickedCallback?.invoke()
+                    }
+
+                    override fun onAdClosed() {
+                        adClosedCallback?.invoke()
+                        loadInterstitialAd()
+                    }
+
+                    override fun onAdOpened() {
+                        adShownCallback?.invoke()
+                    }
+                }
+
+                val adParam = AdParam.Builder().build()
+                loadAd(adParam)
+            }
+        }
+
+        fun showAd(activity: Activity): Boolean {
+            return if (isAdLoaded()) {
+                interstitialAd?.show(activity)
+                true
+            } else {
+                false
+            }
+        }
+
+        fun isAdLoaded(): Boolean {
+            return interstitialAd?.isLoaded == true
+        }
+
+        fun refreshAd() {
+            loadInterstitialAd()
+        }
+
+        override fun onDestroy(owner: LifecycleOwner) {
+            super.onDestroy(owner)
+            interstitialAd = null
         }
     }
 }

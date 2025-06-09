@@ -18,6 +18,11 @@ class SharedPreferencesManager @Inject constructor(
         const val WIDGET_ORIENTATION = "widget_orientation"
         const val WIDGET_SORT = "widget_sort"
         const val WIDGET_TOTAL_VIDEO = "widget_total_video"
+
+        // Interstitial Ads
+        const val INTERSTITIAL_CLICK_COUNT = "interstitial_click_count"
+        const val INTERSTITIAL_LAST_AD_TIME = "interstitial_last_ad_time"
+        const val INTERSTITIAL_FIRST_AD_SHOWN = "interstitial_first_ad_shown"
     }
 
     private val sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
