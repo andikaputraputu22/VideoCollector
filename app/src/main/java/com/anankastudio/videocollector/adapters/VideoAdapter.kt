@@ -39,6 +39,12 @@ class VideoAdapter : RecyclerView.Adapter<ItemVideo>() {
         notifyItemRangeInserted((listVideo.size - items.size), items.size)
     }
 
+    fun setFirstData(items: List<Video>) {
+        listVideo.clear()
+        listVideo.addAll(items)
+        notifyDataSetChanged()
+    }
+
     fun clear() {
         listVideo.clear()
         notifyDataSetChanged()
