@@ -16,6 +16,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.anankastudio.videocollector.BuildConfig
 import com.anankastudio.videocollector.R
 import java.util.Locale
 
@@ -168,5 +169,12 @@ class Utils {
                 Toast.LENGTH_SHORT
             ).show()
         }
+    }
+
+    fun getVersionName(context: Context): String {
+        val isDebug = if (BuildConfig.DEBUG) " (debug)" else ""
+        val versionName = "${context.getString(R.string.version)} ${BuildConfig.VERSION_NAME}$isDebug"
+
+        return versionName
     }
 }

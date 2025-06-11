@@ -169,7 +169,7 @@ class DetailViewModel @Inject constructor(
         utils.shareFileVideo(videoUri, context)
     }
 
-    fun showCreatorProfile(url: String, context: Context) {
+    fun openBrowser(url: String, context: Context) {
         utils.openExternalBrowser(url, context)
     }
 

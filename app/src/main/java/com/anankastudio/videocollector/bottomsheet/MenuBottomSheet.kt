@@ -5,14 +5,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.anankastudio.videocollector.BuildConfig
 import com.anankastudio.videocollector.R
 import com.anankastudio.videocollector.databinding.BottomSheetMenuBinding
 import com.anankastudio.videocollector.interfaces.OnClickMenu
+import com.anankastudio.videocollector.utilities.Utils
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MenuBottomSheet : BottomSheetDialogFragment() {
+
+    @Inject
+    lateinit var utils: Utils
 
     private var _binding: BottomSheetMenuBinding? = null
     private val binding get() = _binding!!
@@ -40,9 +46,7 @@ class MenuBottomSheet : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val isDebug = if (BuildConfig.DEBUG) " (debug)" else ""
-        val versionName = "${getString(R.string.version)} ${BuildConfig.VERSION_NAME}$isDebug"
-        binding.version.text = versionName
+        binding.version.text = utils.getVersionName(requireContext())
 
         setupClickListener()
     }

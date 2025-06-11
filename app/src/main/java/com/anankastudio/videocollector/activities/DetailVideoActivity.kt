@@ -111,9 +111,10 @@ class DetailVideoActivity : AppCompatActivity(), OnClickDownload, OnClickMoreFea
             }
         }
 
-        binding.download.setOnClickListener {
-            handleButtonClick {
-                showDownloadDialog()
+        binding.openInBrowser.setOnClickListener {
+            val data = viewModel.dataDetailVideo
+            data?.url?.let {
+                viewModel.openBrowser(it, this@DetailVideoActivity)
             }
         }
 
@@ -284,8 +285,15 @@ class DetailVideoActivity : AppCompatActivity(), OnClickDownload, OnClickMoreFea
 
         override fun onClickViewCreator(creator: ContentDetailProfile?) {
             creator?.userUrl?.let {
-                viewModel.showCreatorProfile(it, this@DetailVideoActivity)
+                viewModel.openBrowser(it, this@DetailVideoActivity)
             }
+        }
+
+        override fun onClickPexels() {
+            viewModel.openBrowser(
+                "https://www.pexels.com/",
+                this@DetailVideoActivity
+            )
         }
     }
 

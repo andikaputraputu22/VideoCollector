@@ -79,4 +79,22 @@
     <string name="setup_widget_failed">Setup widget failed</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="terms_of_use">Terms of Use</string>
+    <string name="open_in_browser">Open in Browser</string>
+    <string name="video_by">Video by\u0020</string>
+    <string name="videos_provided_by">Videos provided by\u0020</string>
+    <string name="pexels"><![CDATA[<u>Pexels</u>]]></string>
+    <string name="app_description">VLILOOM is a free video discovery that helps you to find and save high-quality videos for your creative projects.</string>
+    <string name="features">Features</string>
+    <string name="credits">Credits</string>
+    <string name="content_sources">Content Sources:</string>
+    <string name="content_sources_content">Free stock images and videos for everyone.</string>
+    <string name="special_thanks">Special Thanks:</string>
+    <string name="special_thanks_content">All video creators and contributors.</string>
+    <string name="features_content">
+        \u0020\u2022 Discover thousands of free videos.\n
+        \u2022 High-quality video downloads.\n
+        \u2022 Easy sharing with friends.\n
+        \u2022 Search by category or keyword.\n
+        \u2022 Multiple video formats and resolutions.
+    </string>
 </resources>
