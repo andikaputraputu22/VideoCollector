@@ -2,6 +2,7 @@ package com.anankastudio.videocollector.repository
 
 import android.content.Context
 import com.anankastudio.videocollector.api.ApiService
+import com.anankastudio.videocollector.api.ApiServiceVideo
 import com.anankastudio.videocollector.database.DetailVideoDao
 import com.anankastudio.videocollector.database.FavoriteVideoDao
 import com.anankastudio.videocollector.database.SearchHistoryDao
@@ -26,6 +27,7 @@ import javax.inject.Inject
 class VideoRepository @Inject constructor(
     private val context: Context,
     private val apiService: ApiService,
+    private val apiServiceVideo: ApiServiceVideo,
     private val detailVideoDao: DetailVideoDao,
     private val favoriteVideoDao: FavoriteVideoDao,
     private val searchHistoryDao: SearchHistoryDao,
@@ -34,7 +36,7 @@ class VideoRepository @Inject constructor(
 
     suspend fun fetchPopularVideo(page: Int): Result<PopularResponse> = withContext(Dispatchers.IO) {
         try {
-            val response = apiService.getPopularVideo(page)
+            val response = apiServiceVideo.getPopularVideo(page)
             if (response.isSuccessful) {
                 response.body()?.let {
                     Result.Success(it)
@@ -54,7 +56,7 @@ class VideoRepository @Inject constructor(
         size: String = ""
     ): Result<PopularResponse> = withContext(Dispatchers.IO) {
         try {
-            val response = apiService.getSearchVideo(page, query, orientation, size)
+            val response = apiServiceVideo.getSearchVideo(page, query, orientation, size)
             if (response.isSuccessful) {
                 response.body()?.let {
                     Result.Success(it)
@@ -170,7 +172,7 @@ class VideoRepository @Inject constructor(
                 }
             }
 
-            val response = apiService.getDetailVideo(id.toString())
+            val response = apiServiceVideo.getDetailVideo(id.toString())
             if (response.isSuccessful) {
                 response.body()?.let {
                     saveVideoToDatabase(it)
