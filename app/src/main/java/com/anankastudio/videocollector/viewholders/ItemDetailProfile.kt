@@ -19,8 +19,17 @@ class ItemDetailProfile(
             Html.FROM_HTML_MODE_LEGACY
         )
 
+        binding.pexels.text = Html.fromHtml(
+            itemView.context.getString(R.string.pexels),
+            Html.FROM_HTML_MODE_LEGACY
+        )
+
         binding.viewCreator.setOnClickListener {
             onClickCreator.onClickViewCreator(data)
+        }
+
+        binding.pexels.setOnClickListener {
+            onClickCreator.onClickPexels()
         }
 
         binding.shareProfile.setOnClickListener {
