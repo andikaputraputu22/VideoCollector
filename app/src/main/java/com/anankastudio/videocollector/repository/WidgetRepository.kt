@@ -1,7 +1,7 @@
 package com.anankastudio.videocollector.repository
 
 import android.content.Context
-import com.anankastudio.videocollector.api.ApiService
+import com.anankastudio.videocollector.api.ApiServiceVideo
 import com.anankastudio.videocollector.database.WidgetVideoDao
 import com.anankastudio.videocollector.models.PopularResponse
 import com.anankastudio.videocollector.models.room.WidgetVideo
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 class WidgetRepository @Inject constructor(
     private val context: Context,
-    private val apiService: ApiService,
+    private val apiServiceVideo: ApiServiceVideo,
     private val widgetVideoDao: WidgetVideoDao,
     private val sharedPreferencesManager: SharedPreferencesManager
 ) {
@@ -27,7 +27,7 @@ class WidgetRepository @Inject constructor(
 
             widgetVideoDao.deleteAllWidgetVideo()
             keywords.forEach { keyword ->
-                val response = apiService.getWidgetVideo(1, totalVideo, keyword, orientation)
+                val response = apiServiceVideo.getWidgetVideo(1, totalVideo, keyword, orientation)
                 if (response.isSuccessful) {
                     response.body()?.let {
                         saveVideoToDatabase(it)

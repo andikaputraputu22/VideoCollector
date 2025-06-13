@@ -2,6 +2,7 @@ package com.anankastudio.videocollector.injection
 
 import android.content.Context
 import com.anankastudio.videocollector.api.ApiService
+import com.anankastudio.videocollector.api.ApiServiceVideo
 import com.anankastudio.videocollector.database.DetailVideoDao
 import com.anankastudio.videocollector.database.FavoriteVideoDao
 import com.anankastudio.videocollector.database.SearchHistoryDao
@@ -28,24 +29,33 @@ object AppModule {
     @Provides
     fun provideVideoRepository(
         @ApplicationContext context: Context,
-        apiService: ApiService,
+        @Api apiService: ApiService,
+        @VideoApi apiServiceVideo: ApiServiceVideo,
         detailVideoDao: DetailVideoDao,
         favoriteVideoDao: FavoriteVideoDao,
         searchHistoryDao: SearchHistoryDao,
         utils: Utils
     ): VideoRepository {
-        return VideoRepository(context, apiService, detailVideoDao, favoriteVideoDao, searchHistoryDao, utils)
+        return VideoRepository(
+            context,
+            apiService,
+            apiServiceVideo,
+            detailVideoDao,
+            favoriteVideoDao,
+            searchHistoryDao,
+            utils
+        )
     }
 
     @Singleton
     @Provides
     fun provideWidgetRepository(
         @ApplicationContext context: Context,
-        apiService: ApiService,
+        @VideoApi apiServiceVideo: ApiServiceVideo,
         widgetVideoDao: WidgetVideoDao,
         sharedPreferencesManager: SharedPreferencesManager
     ): WidgetRepository {
-        return WidgetRepository(context, apiService, widgetVideoDao, sharedPreferencesManager)
+        return WidgetRepository(context, apiServiceVideo, widgetVideoDao, sharedPreferencesManager)
     }
 
     @Singleton
