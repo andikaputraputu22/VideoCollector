@@ -6,6 +6,7 @@ import com.anankastudio.videocollector.databinding.ItemDetailProfileBinding
 import com.anankastudio.videocollector.interfaces.OnClickCreator
 import com.anankastudio.videocollector.models.item.ContentDetailProfile
 import com.anankastudio.videocollector.utilities.HolderDetail
+import com.anankastudio.videocollector.utilities.addUnderline
 
 class ItemDetailProfile(
     override val binding: ItemDetailProfileBinding,
@@ -13,18 +14,15 @@ class ItemDetailProfile(
 ) : HolderDetail<ContentDetailProfile>(binding) {
 
     override fun onBind() {
-        binding.name.text = data.userName
-        binding.viewCreator.text = Html.fromHtml(
-            itemView.context.getString(R.string.view_creator_underline),
-            Html.FROM_HTML_MODE_LEGACY
-        )
+        binding.creator.text = data.userName
+        binding.creator.addUnderline()
 
         binding.pexels.text = Html.fromHtml(
             itemView.context.getString(R.string.pexels),
             Html.FROM_HTML_MODE_LEGACY
         )
 
-        binding.viewCreator.setOnClickListener {
+        binding.creator.setOnClickListener {
             onClickCreator.onClickViewCreator(data)
         }
 

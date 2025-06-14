@@ -80,6 +80,7 @@
     <string name="privacy_policy">Privacy Policy</string>
     <string name="terms_of_use">Terms of Use</string>
     <string name="open_in_browser">Open in Browser</string>
+    <string name="provided_by">Provided by\u0020</string>
     <string name="video_by">Video by\u0020</string>
     <string name="videos_provided_by">Videos provided by\u0020</string>
     <string name="pexels"><![CDATA[<u>Pexels</u>]]></string>
