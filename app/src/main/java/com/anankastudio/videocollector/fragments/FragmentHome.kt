@@ -59,6 +59,7 @@ class FragmentHome : Fragment(), OnClickMenu, OnClickCustomizeWidget {
         setupLogo()
         setupListVideo()
         setupClickListener()
+        viewModel.setupInterstitialAd(requireContext(), lifecycle)
         observeData()
         checkScrollVideoList()
         binding.swipeRefresh.setOnRefreshListener {
@@ -151,9 +152,11 @@ class FragmentHome : Fragment(), OnClickMenu, OnClickCustomizeWidget {
 
     private val onClickVideo = object : OnClickVideo {
         override fun onClickDetail(id: Long) {
-            val intent = Intent(requireContext(), DetailVideoActivity::class.java)
-            intent.putExtra(DetailVideoActivity.EXTRA_ID_VIDEO, id)
-            startActivity(intent)
+            viewModel.handleButtonClick(requireActivity()) {
+                val intent = Intent(requireContext(), DetailVideoActivity::class.java)
+                intent.putExtra(DetailVideoActivity.EXTRA_ID_VIDEO, id)
+                startActivity(intent)
+            }
         }
     }
 
