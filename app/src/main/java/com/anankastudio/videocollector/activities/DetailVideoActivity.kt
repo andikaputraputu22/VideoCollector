@@ -51,8 +51,6 @@ class DetailVideoActivity : AppCompatActivity(), OnClickDownload, OnClickMoreFea
     private lateinit var progressDialog: CustomProgressDialog
     private var urlDownload = ""
     private lateinit var bannerHelper: PetalAdsHelper.BannerHelper
-    private lateinit var interstitialHelper: PetalAdsHelper.InterstitialHelper
-    private var pendingAction: (() -> Unit)? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,7 +66,6 @@ class DetailVideoActivity : AppCompatActivity(), OnClickDownload, OnClickMoreFea
         setupListDetail()
         setupClickListener()
         setupBannerAd()
-        setupInterstitialAd()
         observeData()
         viewModel.getDetailVideo(idVideo)
     }
@@ -119,15 +116,11 @@ class DetailVideoActivity : AppCompatActivity(), OnClickDownload, OnClickMoreFea
         }
 
         binding.actionDownload.setOnClickListener {
-            handleButtonClick {
-                showDownloadDialog()
-            }
+            showDownloadDialog()
         }
 
         binding.actionMore.setOnClickListener {
-            handleButtonClick {
-                showMoreFeatureDialog()
-            }
+            showMoreFeatureDialog()
         }
     }
 
@@ -175,53 +168,6 @@ class DetailVideoActivity : AppCompatActivity(), OnClickDownload, OnClickMoreFea
             )
 
         lifecycle.addObserver(bannerHelper)
-    }
-
-    private fun setupInterstitialAd() {
-        interstitialHelper = petalAdsHelper.createInterstitialHelper(this)
-            .setAdConfiguration(adId = "testb4znbuh3n2")
-            .loadAd(
-                onAdLoaded = {},
-                onAdFailed = {},
-                onAdClosed = {
-                    viewModel.markFirstAdShown()
-                    viewModel.resetAdTrigger()
-                    pendingAction?.invoke()
-                    pendingAction = null
-                }
-            )
-
-        lifecycle.addObserver(interstitialHelper)
-    }
-
-    private fun showInterstitialAndContinue(action: () -> Unit) {
-        if (interstitialHelper.isAdLoaded()) {
-            pendingAction = action
-            interstitialHelper.showAd(this)
-        } else {
-            action()
-        }
-    }
-
-    private fun handleButtonClick(action: () -> Unit) {
-        val isFirstTime = !viewModel.isFirstTimeAdShown()
-        if (isFirstTime) {
-            if (interstitialHelper.isAdLoaded()) {
-                showInterstitialAndContinue(action)
-            } else {
-                action()
-            }
-            return
-        }
-
-        val currentClickCount = viewModel.getClickCount() + 1
-        viewModel.setClickCount(currentClickCount)
-
-        if (viewModel.shouldShowInterstitial() && interstitialHelper.isAdLoaded()) {
-            showInterstitialAndContinue(action)
-        } else {
-            action()
-        }
     }
 
     private fun observeData() {

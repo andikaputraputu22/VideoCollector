@@ -7,6 +7,7 @@ import com.anankastudio.videocollector.database.DetailVideoDao
 import com.anankastudio.videocollector.database.FavoriteVideoDao
 import com.anankastudio.videocollector.database.SearchHistoryDao
 import com.anankastudio.videocollector.database.WidgetVideoDao
+import com.anankastudio.videocollector.repository.AdRepository
 import com.anankastudio.videocollector.repository.MediaRepository
 import com.anankastudio.videocollector.repository.VideoRepository
 import com.anankastudio.videocollector.repository.WidgetRepository
@@ -65,6 +66,14 @@ object AppModule {
         notificationManager: NotificationManager
     ): MediaRepository {
         return MediaRepository(context, notificationManager)
+    }
+
+    @Singleton
+    @Provides
+    fun provideAdRepository(
+        sharedPreferencesManager: SharedPreferencesManager
+    ): AdRepository {
+        return AdRepository(sharedPreferencesManager)
     }
 
     @Singleton
