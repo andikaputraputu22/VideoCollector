@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.anankastudio.videocollector.R
 import com.anankastudio.videocollector.activities.CollectionActivity
 import com.anankastudio.videocollector.activities.DetailVideoActivity
+import com.anankastudio.videocollector.activities.MainActivity
 import com.anankastudio.videocollector.adapters.ExploreAdapter
 import com.anankastudio.videocollector.adapters.SearchHistoryAdapter
 import com.anankastudio.videocollector.bottomsheet.FilterBottomSheet
@@ -30,6 +31,7 @@ import com.anankastudio.videocollector.interfaces.OnClickVideo
 import com.anankastudio.videocollector.interfaces.OnSelectSearchHistory
 import com.anankastudio.videocollector.utilities.Constants
 import com.anankastudio.videocollector.utilities.SpaceItemDecoration
+import com.anankastudio.videocollector.viewmodels.AdViewModel
 import com.anankastudio.videocollector.viewmodels.ExploreViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -42,6 +44,9 @@ class FragmentExplore : Fragment(), OnClickFilter {
     private var clearButtonDrawable: Drawable? = null
     private val exploreAdapter = ExploreAdapter()
     private val filterBottomSheet = FilterBottomSheet()
+
+    private val adViewModel: AdViewModel
+        get() = (requireActivity() as MainActivity).adViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -197,9 +202,11 @@ class FragmentExplore : Fragment(), OnClickFilter {
 
     private val onClickVideo = object : OnClickVideo {
         override fun onClickDetail(id: Long) {
-            val intent = Intent(requireContext(), DetailVideoActivity::class.java)
-            intent.putExtra(DetailVideoActivity.EXTRA_ID_VIDEO, id)
-            startActivity(intent)
+            adViewModel.handleButtonClick(requireActivity()) {
+                val intent = Intent(requireContext(), DetailVideoActivity::class.java)
+                intent.putExtra(DetailVideoActivity.EXTRA_ID_VIDEO, id)
+                startActivity(intent)
+            }
         }
     }
 

@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.anankastudio.videocollector.R
 import com.anankastudio.videocollector.activities.AboutActivity
 import com.anankastudio.videocollector.activities.DetailVideoActivity
+import com.anankastudio.videocollector.activities.MainActivity
 import com.anankastudio.videocollector.adapters.VideoAdapter
 import com.anankastudio.videocollector.bottomsheet.CustomizeWidgetBottomSheet
 import com.anankastudio.videocollector.bottomsheet.MenuBottomSheet
@@ -25,6 +26,7 @@ import com.anankastudio.videocollector.interfaces.OnClickVideo
 import com.anankastudio.videocollector.utilities.CustomProgressDialog
 import com.anankastudio.videocollector.utilities.LetterSpacingSpan
 import com.anankastudio.videocollector.utilities.SpaceItemDecoration
+import com.anankastudio.videocollector.viewmodels.AdViewModel
 import com.anankastudio.videocollector.viewmodels.HomeViewModel
 import com.anankastudio.videocollector.widget.SlideWidgetHelper
 import dagger.hilt.android.AndroidEntryPoint
@@ -39,6 +41,9 @@ class FragmentHome : Fragment(), OnClickMenu, OnClickCustomizeWidget {
     private val menuBottomSheet = MenuBottomSheet()
     private val customizeWidgetBottomSheet = CustomizeWidgetBottomSheet()
     private lateinit var progressDialog: CustomProgressDialog
+
+    private val adViewModel: AdViewModel
+        get() = (requireActivity() as MainActivity).adViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -59,7 +64,6 @@ class FragmentHome : Fragment(), OnClickMenu, OnClickCustomizeWidget {
         setupLogo()
         setupListVideo()
         setupClickListener()
-        viewModel.setupInterstitialAd(requireContext(), lifecycle)
         observeData()
         checkScrollVideoList()
         binding.swipeRefresh.setOnRefreshListener {
@@ -152,7 +156,7 @@ class FragmentHome : Fragment(), OnClickMenu, OnClickCustomizeWidget {
 
     private val onClickVideo = object : OnClickVideo {
         override fun onClickDetail(id: Long) {
-            viewModel.handleButtonClick(requireActivity()) {
+            adViewModel.handleButtonClick(requireActivity()) {
                 val intent = Intent(requireContext(), DetailVideoActivity::class.java)
                 intent.putExtra(DetailVideoActivity.EXTRA_ID_VIDEO, id)
                 startActivity(intent)
@@ -210,14 +214,14 @@ class FragmentHome : Fragment(), OnClickMenu, OnClickCustomizeWidget {
 
     override fun onClickPrivacyPolicy() {
         viewModel.showExternalBrowser(
-            "https://github.com/andikaputraputu22",
+            "https://sites.google.com/view/vliloom-privacy-policy",
             requireContext()
         )
     }
 
     override fun onClickTermsOfUse() {
         viewModel.showExternalBrowser(
-            "https://github.com/andikaputraputu22",
+            "https://sites.google.com/view/vliloom-terms-of-use",
             requireContext()
         )
     }

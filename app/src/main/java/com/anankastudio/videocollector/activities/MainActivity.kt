@@ -18,6 +18,8 @@ import com.anankastudio.videocollector.fragments.FragmentFavorite
 import com.anankastudio.videocollector.fragments.FragmentHome
 import com.anankastudio.videocollector.interfaces.OnClickConfirm
 import com.anankastudio.videocollector.utilities.NotificationManager
+import com.anankastudio.videocollector.utilities.setupAds
+import com.anankastudio.videocollector.viewmodels.AdViewModel
 import com.anankastudio.videocollector.viewmodels.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -34,6 +36,7 @@ class MainActivity : AppCompatActivity(), OnClickConfirm {
     private val exploreFragment = FragmentExplore()
     private val favoriteFragment = FragmentFavorite()
     private val notificationPermissionBottomSheet = NotificationPermissionBottomSheet()
+    lateinit var adViewModel: AdViewModel
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
@@ -52,6 +55,7 @@ class MainActivity : AppCompatActivity(), OnClickConfirm {
 
         setupStatusBar()
         setupBottomNavigation()
+        adViewModel = setupAds()
 
         notificationManager.onPermissionGranted = {}
         notificationManager.onPermissionDenied = {}

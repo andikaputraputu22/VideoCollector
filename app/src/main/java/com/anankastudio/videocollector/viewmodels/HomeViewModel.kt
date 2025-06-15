@@ -1,17 +1,13 @@
 package com.anankastudio.videocollector.viewmodels
 
-import android.app.Activity
 import android.content.Context
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.anankastudio.videocollector.models.Video
-import com.anankastudio.videocollector.repository.AdRepository
 import com.anankastudio.videocollector.repository.VideoRepository
 import com.anankastudio.videocollector.repository.WidgetRepository
-import com.anankastudio.videocollector.utilities.PetalAdsHelper
 import com.anankastudio.videocollector.utilities.Result
 import com.anankastudio.videocollector.utilities.Utils
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,9 +19,7 @@ import kotlin.math.ceil
 class HomeViewModel @Inject constructor(
     private val videoRepository: VideoRepository,
     private val widgetRepository: WidgetRepository,
-    private val adRepository: AdRepository,
-    private val utils: Utils,
-    private val petalAdsHelper: PetalAdsHelper
+    private val utils: Utils
 ) : ViewModel() {
 
     var page = 1
@@ -35,9 +29,6 @@ class HomeViewModel @Inject constructor(
     val loadingWidget by lazy { MutableLiveData<Boolean>() }
     val isDataAvailable by lazy { MutableLiveData<Boolean>() }
     val isWidgetSetupSuccess by lazy { MutableLiveData<Boolean>() }
-
-    private lateinit var interstitialHelper: PetalAdsHelper.InterstitialHelper
-    private var pendingAction: (() -> Unit)? = null
 
     private val _listVideo = MutableLiveData<List<Video>?>()
     val listVideo: LiveData<List<Video>?> = _listVideo
@@ -101,63 +92,5 @@ class HomeViewModel @Inject constructor(
 
     fun showExternalBrowser(url: String, context: Context) {
         utils.openExternalBrowser(url, context)
-    }
-
-    fun setupInterstitialAd(
-        context: Context,
-        lifecycle: Lifecycle
-    ) {
-        interstitialHelper = petalAdsHelper.createInterstitialHelper(context)
-            .setAdConfiguration(adId = "testb4znbuh3n2")
-            .loadAd(
-                onAdLoaded = {},
-                onAdFailed = {},
-                onAdClosed = {
-                    adRepository.markFirstAdShown()
-                    adRepository.resetAdTrigger()
-                    pendingAction?.invoke()
-                    pendingAction = null
-                }
-            )
-
-        lifecycle.addObserver(interstitialHelper)
-    }
-
-    private fun showInterstitialAndContinue(
-        activity: Activity,
-        action: () -> Unit
-    ) {
-        if (::interstitialHelper.isInitialized && interstitialHelper.isAdLoaded()) {
-            pendingAction = action
-            interstitialHelper.showAd(activity)
-        } else {
-            action()
-        }
-    }
-
-    fun handleButtonClick(
-        activity: Activity,
-        action: () -> Unit
-    ) {
-        val isFirstTime = !adRepository.isFirstTimeAdShown()
-        if (isFirstTime) {
-            if (::interstitialHelper.isInitialized && interstitialHelper.isAdLoaded()) {
-                showInterstitialAndContinue(activity, action)
-            } else {
-                action()
-            }
-            return
-        }
-
-        val currentClickCount = adRepository.getClickCount() + 1
-        adRepository.setClickCount(currentClickCount)
-
-        if (adRepository.shouldShowInterstitial()
-            && ::interstitialHelper.isInitialized
-            && interstitialHelper.isAdLoaded()) {
-            showInterstitialAndContinue(activity, action)
-        } else {
-            action()
-        }
     }
 }

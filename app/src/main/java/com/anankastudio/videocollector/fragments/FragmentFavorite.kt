@@ -11,12 +11,14 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.anankastudio.videocollector.R
 import com.anankastudio.videocollector.activities.DetailVideoActivity
+import com.anankastudio.videocollector.activities.MainActivity
 import com.anankastudio.videocollector.adapters.VideoAdapter
 import com.anankastudio.videocollector.bottomsheet.ConfirmBottomSheet
 import com.anankastudio.videocollector.databinding.FragmentFavoriteBinding
 import com.anankastudio.videocollector.interfaces.OnClickConfirm
 import com.anankastudio.videocollector.interfaces.OnClickVideo
 import com.anankastudio.videocollector.utilities.SpaceItemDecoration
+import com.anankastudio.videocollector.viewmodels.AdViewModel
 import com.anankastudio.videocollector.viewmodels.FavoriteViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -28,6 +30,9 @@ class FragmentFavorite : Fragment(), OnClickConfirm {
     private lateinit var viewModel: FavoriteViewModel
     private val videoAdapter = VideoAdapter()
     private val confirmBottomSheet = ConfirmBottomSheet()
+
+    private val adViewModel: AdViewModel
+        get() = (requireActivity() as MainActivity).adViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -93,9 +98,11 @@ class FragmentFavorite : Fragment(), OnClickConfirm {
 
     private val onClickVideo = object : OnClickVideo {
         override fun onClickDetail(id: Long) {
-            val intent = Intent(requireContext(), DetailVideoActivity::class.java)
-            intent.putExtra(DetailVideoActivity.EXTRA_ID_VIDEO, id)
-            startActivity(intent)
+            adViewModel.handleButtonClick(requireActivity()) {
+                val intent = Intent(requireContext(), DetailVideoActivity::class.java)
+                intent.putExtra(DetailVideoActivity.EXTRA_ID_VIDEO, id)
+                startActivity(intent)
+            }
         }
     }
 

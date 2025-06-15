@@ -16,6 +16,8 @@ import com.anankastudio.videocollector.adapters.VideoAdapter
 import com.anankastudio.videocollector.databinding.ActivityCollectionBinding
 import com.anankastudio.videocollector.interfaces.OnClickVideo
 import com.anankastudio.videocollector.utilities.SpaceItemDecoration
+import com.anankastudio.videocollector.utilities.setupAds
+import com.anankastudio.videocollector.viewmodels.AdViewModel
 import com.anankastudio.videocollector.viewmodels.CollectionViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -25,6 +27,7 @@ class CollectionActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCollectionBinding
     private val viewModel: CollectionViewModel by viewModels()
     private val videoAdapter = VideoAdapter()
+    private lateinit var adViewModel: AdViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +40,7 @@ class CollectionActivity : AppCompatActivity() {
 
         setupStatusBar()
         setupListVideo()
+        adViewModel = setupAds()
         setupClickListener()
         observeData()
         checkScrollVideoList()
@@ -116,9 +120,11 @@ class CollectionActivity : AppCompatActivity() {
 
     private val onClickVideo = object : OnClickVideo {
         override fun onClickDetail(id: Long) {
-            val intent = Intent(this@CollectionActivity, DetailVideoActivity::class.java)
-            intent.putExtra(DetailVideoActivity.EXTRA_ID_VIDEO, id)
-            startActivity(intent)
+            adViewModel.handleButtonClick(this@CollectionActivity) {
+                val intent = Intent(this@CollectionActivity, DetailVideoActivity::class.java)
+                intent.putExtra(DetailVideoActivity.EXTRA_ID_VIDEO, id)
+                startActivity(intent)
+            }
         }
     }
 
