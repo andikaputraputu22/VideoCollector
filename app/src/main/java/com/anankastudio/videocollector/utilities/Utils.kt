@@ -151,7 +151,7 @@ class Utils {
     }
 
     fun sendFeedback(context: Context) {
-        val recipient = "andikaputraputu.dev@gmail.com"
+        val recipient = "ananka.studio@gmail.com"
         val subject = "Vliloom Feedback"
 
         val intent = Intent(Intent.ACTION_SENDTO).apply {

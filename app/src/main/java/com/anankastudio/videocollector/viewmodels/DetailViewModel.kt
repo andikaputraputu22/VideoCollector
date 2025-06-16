@@ -1,6 +1,7 @@
 package com.anankastudio.videocollector.viewmodels
 
 import android.content.Context
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,10 +11,15 @@ import com.anankastudio.videocollector.models.item.ContentDetailInfo
 import com.anankastudio.videocollector.models.item.ContentDetailProfile
 import com.anankastudio.videocollector.models.item.ContentDetailVideo
 import com.anankastudio.videocollector.models.room.DetailVideo
+import com.anankastudio.videocollector.repository.AdRepository
 import com.anankastudio.videocollector.repository.MediaRepository
 import com.anankastudio.videocollector.repository.VideoRepository
+import com.anankastudio.videocollector.utilities.BannerAdSizeHelper
+import com.anankastudio.videocollector.utilities.Constants
+import com.anankastudio.videocollector.utilities.PetalAdsHelper
 import com.anankastudio.videocollector.utilities.Result
 import com.anankastudio.videocollector.utilities.Utils
+import com.huawei.hms.ads.banner.BannerView
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -22,6 +28,8 @@ import javax.inject.Inject
 class DetailViewModel @Inject constructor(
     private val videoRepository: VideoRepository,
     private val mediaRepository: MediaRepository,
+    private val adRepository: AdRepository,
+    private val petalAdsHelper: PetalAdsHelper,
     private val utils: Utils
 ) : ViewModel() {
 
@@ -39,6 +47,8 @@ class DetailViewModel @Inject constructor(
 
     private val _downloadStatus = MutableLiveData<ResultStatus>()
     val downloadStatus: LiveData<ResultStatus> = _downloadStatus
+
+    private lateinit var bannerHelper: PetalAdsHelper.BannerHelper
 
     var dataDetailVideo: DetailVideo? = null
     var onFavorite: Boolean = false
@@ -166,6 +176,25 @@ class DetailViewModel @Inject constructor(
 
     fun openBrowser(url: String, context: Context) {
         utils.openExternalBrowser(url, context)
+    }
+
+    fun setupBannerAd(
+        bannerView: BannerView,
+        lifecycle: Lifecycle
+    ) {
+        bannerHelper = petalAdsHelper.createBannerHelper(bannerView)
+            .setAdConfiguration(
+                adId = Constants.DETAIL_VIDEO_BANNER,
+                bannerAdSize = BannerAdSizeHelper.getRecommendedBannerSize(),
+                refreshIntervalSeconds = 60
+            )
+            .loadAd(
+                onAdLoaded = {},
+                onAdFailed = {},
+                onAdClicked = {}
+            )
+
+        lifecycle.addObserver(bannerHelper)
     }
 }
 
