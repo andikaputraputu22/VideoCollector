@@ -6,7 +6,7 @@ import java.util.Locale
 
 object BannerAdSizeHelper {
 
-    fun getRecommendedBannerSize(context: Context): BannerAdSize {
+    fun getRecommendedBannerSize(): BannerAdSize {
         val countryCode = Locale.getDefault().country.uppercase(Locale.ROOT)
         return if (countryCode == "CN") {
             BannerAdSize.BANNER_SIZE_360_57
