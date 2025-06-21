@@ -15,14 +15,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.anankastudio.videocollector.R
 import com.anankastudio.videocollector.adapters.DetailVideoAdapter
 import com.anankastudio.videocollector.bottomsheet.DownloadBottomSheet
+import com.anankastudio.videocollector.bottomsheet.MediaPermissionBottomSheet
 import com.anankastudio.videocollector.bottomsheet.MoreFeatureBottomSheet
 import com.anankastudio.videocollector.databinding.ActivityDetailVideoBinding
 import com.anankastudio.videocollector.interfaces.OnClickCreator
 import com.anankastudio.videocollector.interfaces.OnClickDownload
 import com.anankastudio.videocollector.interfaces.OnClickMoreFeature
+import com.anankastudio.videocollector.interfaces.OnPermissionCallback
 import com.anankastudio.videocollector.models.item.ContentDetailProfile
 import com.anankastudio.videocollector.utilities.CustomProgressDialog
-import com.anankastudio.videocollector.utilities.PetalAdsHelper
+import com.anankastudio.videocollector.utilities.SharedPreferencesManager
 import com.anankastudio.videocollector.utilities.Utils
 import com.anankastudio.videocollector.utilities.VideoPlayerManager
 import com.anankastudio.videocollector.viewmodels.DetailViewModel
@@ -31,13 +33,13 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class DetailVideoActivity : AppCompatActivity(), OnClickDownload, OnClickMoreFeature {
+class DetailVideoActivity : AppCompatActivity(), OnClickDownload, OnClickMoreFeature, OnPermissionCallback {
 
     @Inject
     lateinit var utils: Utils
 
     @Inject
-    lateinit var petalAdsHelper: PetalAdsHelper
+    lateinit var sharedPreferencesManager: SharedPreferencesManager
 
     private lateinit var binding: ActivityDetailVideoBinding
     private val viewModel: DetailViewModel by viewModels()
@@ -49,6 +51,8 @@ class DetailVideoActivity : AppCompatActivity(), OnClickDownload, OnClickMoreFea
     private val moreFeatureBottomSheet = MoreFeatureBottomSheet()
     private lateinit var progressDialog: CustomProgressDialog
     private var urlDownload = ""
+    private val mediaPermissionBottomSheet = MediaPermissionBottomSheet()
+    private var pendingOnGrantedCallback: (() -> Unit)? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -254,11 +258,41 @@ class DetailVideoActivity : AppCompatActivity(), OnClickDownload, OnClickMoreFea
         }
     }
 
+    private fun showMediaPermissionDialog(
+        isPermanentDenied: Boolean,
+        onClickAllow: () -> Unit
+    ) {
+        val description = if (isPermanentDenied) {
+            getString(R.string.permission_denied_message)
+        } else {
+            getString(R.string.permission_explanation)
+        }
+
+        val titleButton = if (isPermanentDenied) {
+            getString(R.string.go_to_settings)
+        } else {
+            getString(R.string.grant)
+        }
+
+        val bundle = Bundle()
+        bundle.putString(MediaPermissionBottomSheet.ARG_DESCRIPTION, description)
+        bundle.putString(MediaPermissionBottomSheet.ARG_TITLE_BUTTON, titleButton)
+
+        mediaPermissionBottomSheet.arguments = bundle
+        mediaPermissionBottomSheet.setOnClickAllowListener {
+            onClickAllow()
+        }
+        mediaPermissionBottomSheet.show(
+            supportFragmentManager,
+            MediaPermissionBottomSheet.TAG
+        )
+    }
+
     override fun onClickDownload(url: String) {
         urlDownload = url
-        utils.checkStoragePermission(this) {
+        utils.checkStoragePermission(sharedPreferencesManager, this, {
             viewModel.downloadVideo(this, urlDownload)
-        }
+        }, this)
     }
 
     override fun onClickCopyLink() {
@@ -276,9 +310,25 @@ class DetailVideoActivity : AppCompatActivity(), OnClickDownload, OnClickMoreFea
 
     override fun onClickShareFileVideo() {
         viewModel.onShareFileVideo = true
-        utils.checkStoragePermission(this) {
+        utils.checkStoragePermission(sharedPreferencesManager, this, {
             downloadVideoForShare()
+        }, this)
+    }
+
+    override fun showPermissionExplanationDialog(onGranted: () -> Unit) {
+        showMediaPermissionDialog(false) {
+            utils.requestStoragePermissions(this, onGranted)
         }
+    }
+
+    override fun showPermissionDeniedDialog() {
+        showMediaPermissionDialog(true) {
+            utils.openAppSettings(this)
+        }
+    }
+
+    override fun storePendingCallback(onGranted: () -> Unit) {
+        this.pendingOnGrantedCallback = onGranted
     }
 
     override fun onRequestPermissionsResult(
@@ -287,13 +337,15 @@ class DetailVideoActivity : AppCompatActivity(), OnClickDownload, OnClickMoreFea
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        utils.handlePermissionResult(requestCode, grantResults, {
+        val callbackToUse = pendingOnGrantedCallback ?: {
             if (viewModel.onShareFileVideo) {
                 downloadVideoForShare()
             } else {
                 viewModel.downloadVideo(this, urlDownload)
             }
-        }, this)
+        }
+        utils.handlePermissionResult(requestCode, grantResults, callbackToUse, this, this)
+        pendingOnGrantedCallback = null
     }
 
     override fun onDestroy() {
