@@ -9,8 +9,12 @@ object Constants {
     const val SORT_SEQUENCE = 1
     const val SORT_RANDOM = 2
 
-    const val DETAIL_VIDEO_BANNER = "testw6vs28auh3"
-    const val DEFAULT_INTERSTITIAL = "testb4znbuh3n2"
-    const val MAIN_INTERSTITIAL = "testb4znbuh3n2"
-    const val COLLECTION_INTERSTITIAL = "testb4znbuh3n2"
+    const val DETAIL_VIDEO_BANNER_TEST = "testw6vs28auh3"
+    const val MAIN_INTERSTITIAL_TEST = "testb4znbuh3n2"
+    const val COLLECTION_INTERSTITIAL_TEST = "testb4znbuh3n2"
+
+    const val DETAIL_VIDEO_BANNER = "z214utaswh"
+    const val DEFAULT_INTERSTITIAL = "z1mu55zfxh"
+    const val MAIN_INTERSTITIAL = "z1mu55zfxh"
+    const val COLLECTION_INTERSTITIAL = "u8zmg5qcau"
 }

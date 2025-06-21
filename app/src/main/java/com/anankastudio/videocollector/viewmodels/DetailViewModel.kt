@@ -11,7 +11,6 @@ import com.anankastudio.videocollector.models.item.ContentDetailInfo
 import com.anankastudio.videocollector.models.item.ContentDetailProfile
 import com.anankastudio.videocollector.models.item.ContentDetailVideo
 import com.anankastudio.videocollector.models.room.DetailVideo
-import com.anankastudio.videocollector.repository.AdRepository
 import com.anankastudio.videocollector.repository.MediaRepository
 import com.anankastudio.videocollector.repository.VideoRepository
 import com.anankastudio.videocollector.utilities.BannerAdSizeHelper
@@ -28,7 +27,6 @@ import javax.inject.Inject
 class DetailViewModel @Inject constructor(
     private val videoRepository: VideoRepository,
     private val mediaRepository: MediaRepository,
-    private val adRepository: AdRepository,
     private val petalAdsHelper: PetalAdsHelper,
     private val utils: Utils
 ) : ViewModel() {

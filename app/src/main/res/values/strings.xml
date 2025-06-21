@@ -38,7 +38,7 @@
     <string name="data_not_found">Data not found</string>
     <string name="select_the_size">Select the Size</string>
     <string name="alert_need_storage_permission">Storage permission is required</string>
-    <string name="download_video_start">Download started, check notifications when done</string>
+    <string name="download_video_start">Download starting</string>
     <string name="download_video_success">Video saved to gallery</string>
     <string name="download_video_failed">Failed to download video</string>
     <string name="copy_link">Copy Link</string>
@@ -98,4 +98,9 @@
         \u2022 Search by category or keyword.\n
         \u2022 Multiple video formats and resolutions.
     </string>
+    <string name="permission_required">Permission Required</string>
+    <string name="permission_explanation">This app needs media permission to download videos. Please grant the permission to continue.</string>
+    <string name="permission_denied_message">Media permission is required to download videos. Please enable it in app settings.</string>
+    <string name="go_to_settings">Go to Settings</string>
+    <string name="grant">Grant</string>
 </resources>

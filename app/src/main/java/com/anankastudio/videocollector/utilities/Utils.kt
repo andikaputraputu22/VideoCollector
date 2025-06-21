@@ -9,6 +9,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
+import android.provider.Settings
 import android.util.DisplayMetrics
 import android.view.View
 import android.view.WindowManager
@@ -18,6 +19,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.anankastudio.videocollector.BuildConfig
 import com.anankastudio.videocollector.R
+import com.anankastudio.videocollector.interfaces.OnPermissionCallback
 import java.util.Locale
 
 class Utils {
@@ -65,16 +67,29 @@ class Utils {
         }
     }
 
-    fun checkStoragePermission(activity: Activity, onGranted: () -> Unit) {
+    fun checkStoragePermission(
+        sharedPreferencesManager: SharedPreferencesManager,
+        activity: Activity,
+        onGranted: () -> Unit,
+        onPermissionCallback: OnPermissionCallback
+    ) {
         when {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
                 if (ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_MEDIA_VIDEO)
                     != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(
-                        activity,
-                        arrayOf(Manifest.permission.READ_MEDIA_VIDEO),
-                        Constants.STORAGE_PERMISSION_CODE
-                    )
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.READ_MEDIA_VIDEO)) {
+                        onPermissionCallback.showPermissionExplanationDialog(onGranted)
+                    } else {
+                        if (isFirstTimeAskingPermission(sharedPreferencesManager, Manifest.permission.READ_MEDIA_VIDEO)) {
+                            requestStoragePermissions(activity, onGranted)
+                            setFirstTimeAskingPermission(
+                                sharedPreferencesManager,
+                                Manifest.permission.READ_MEDIA_VIDEO
+                            )
+                        } else {
+                            onPermissionCallback.showPermissionDeniedDialog()
+                        }
+                    }
                 } else {
                     onGranted()
                 }
@@ -84,40 +99,154 @@ class Utils {
             }
             else -> {
                 val permissionsNeeded = mutableListOf<String>()
+                val permissionsPermanentlyDenied = mutableListOf<String>()
+
                 if (ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) {
-                    permissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+                    if (!ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.READ_EXTERNAL_STORAGE)
+                        && !isFirstTimeAskingPermission(sharedPreferencesManager, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                        permissionsPermanentlyDenied.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+                    } else {
+                        permissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+                    }
                 }
+
                 if (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) {
-                    permissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    if (!ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        && !isFirstTimeAskingPermission(sharedPreferencesManager, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                        permissionsPermanentlyDenied.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    } else {
+                        permissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    }
                 }
-                if (permissionsNeeded.isNotEmpty()) {
-                    ActivityCompat.requestPermissions(
-                        activity,
-                        permissionsNeeded.toTypedArray(),
-                        Constants.STORAGE_PERMISSION_CODE
-                    )
-                } else {
-                    onGranted()
+
+                when {
+                    permissionsPermanentlyDenied.isNotEmpty() -> {
+                        onPermissionCallback.showPermissionDeniedDialog()
+                    }
+                    permissionsNeeded.isNotEmpty() -> {
+                        val shouldShowRationale = permissionsNeeded.any { permission ->
+                            ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)
+                        }
+
+                        if (shouldShowRationale) {
+                            onPermissionCallback.showPermissionExplanationDialog(onGranted)
+                        } else {
+                            permissionsNeeded.forEach {
+                                setFirstTimeAskingPermission(sharedPreferencesManager, it)
+                            }
+                            requestStoragePermissions(activity, onGranted)
+                        }
+                    }
+                    else -> {
+                        onGranted()
+                    }
                 }
             }
         }
+    }
+
+    fun requestStoragePermissions(
+        activity: Activity,
+        onGranted: () -> Unit
+    ) {
+        if (activity is OnPermissionCallback) {
+            activity.storePendingCallback(onGranted)
+        }
+
+        val permissions = when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
+                arrayOf(Manifest.permission.READ_MEDIA_VIDEO)
+            }
+            else -> {
+                arrayOf(
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
+            }
+        }
+
+        ActivityCompat.requestPermissions(
+            activity,
+            permissions,
+            Constants.STORAGE_PERMISSION_CODE
+        )
     }
 
     fun handlePermissionResult(
         requestCode: Int,
         grantResults: IntArray,
         onGranted: () -> Unit,
-        context: Context
+        context: Context,
+        onPermissionCallback: OnPermissionCallback
     ) {
         if (requestCode == Constants.STORAGE_PERMISSION_CODE) {
-            if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-                onGranted()
-            } else {
-                Toast.makeText(context, context.getString(R.string.alert_need_storage_permission), Toast.LENGTH_SHORT).show()
+            when {
+                grantResults.isEmpty() -> {
+                    Toast.makeText(context, context.getString(R.string.alert_need_storage_permission), Toast.LENGTH_SHORT).show()
+                }
+                grantResults.all { it == PackageManager.PERMISSION_GRANTED } -> {
+                    onGranted()
+                }
+                else -> {
+                    val activity = context as Activity
+                    val permissions = when {
+                        Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
+                            arrayOf(Manifest.permission.READ_MEDIA_VIDEO)
+                        }
+                        else -> {
+                            arrayOf(
+                                Manifest.permission.READ_EXTERNAL_STORAGE,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                            )
+                        }
+                    }
+
+                    val canShowRationale = permissions.any { permission ->
+                        ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)
+                    }
+
+                    if (canShowRationale) {
+                        onPermissionCallback.showPermissionExplanationDialog(onGranted)
+                    } else {
+                        val isActuallyDenied = permissions.any { permission ->
+                            ContextCompat.checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED
+                        }
+
+                        if (isActuallyDenied) {
+                            onPermissionCallback.showPermissionDeniedDialog()
+                        } else {
+                            onGranted()
+                        }
+                    }
+                }
             }
         }
+    }
+
+    private fun isFirstTimeAskingPermission(
+        sharedPreferencesManager: SharedPreferencesManager,
+        permission: String
+    ): Boolean {
+        return sharedPreferencesManager.getBoolean(
+            permission,
+            true
+        )
+    }
+
+    private fun setFirstTimeAskingPermission(
+        sharedPreferencesManager: SharedPreferencesManager,
+        permission: String
+    ) {
+        sharedPreferencesManager.setBoolean(permission, false)
+    }
+
+    fun openAppSettings(activity: Activity) {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+            data = Uri.fromParts("package", activity.packageName, null)
+        }
+        activity.startActivity(intent)
     }
 
     fun copyUrlToClipboard(url: String, context: Context) {
