@@ -13,6 +13,7 @@ class SharedPreferencesManager @Inject constructor(
         const val FILTER_ORIENTATION = "filter_orientation"
         const val FILTER_SIZE = "filter_size"
         const val IS_FIRST_LAUNCH = "is_first_launch"
+        const val IS_ALREADY_READ_PRIVACY_POLICY = "is_already_read_privacy_policy"
 
         const val WIDGET_LIST_KEYWORD = "widget_list_keyword"
         const val WIDGET_ORIENTATION = "widget_orientation"

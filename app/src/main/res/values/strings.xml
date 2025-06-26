@@ -103,4 +103,6 @@
     <string name="permission_denied_message">Media permission is required to download videos. Please enable it in app settings.</string>
     <string name="go_to_settings">Go to Settings</string>
     <string name="grant">Grant</string>
+    <string name="welcome_to_vliloom">Welcome to Vliloom</string>
+    <string name="continue_use">Continue</string>
 </resources>
