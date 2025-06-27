@@ -37,7 +37,7 @@ class VideoRepository @Inject constructor(
     suspend fun fetchPopularVideo(page: Int): Result<PopularResponse> = withContext(Dispatchers.IO) {
         try {
             val response = apiServiceVideo.getPopularVideo(page)
-            if (response.isSuccessful) {
+            return@withContext if (response.isSuccessful) {
                 response.body()?.let {
                     Result.Success(it)
                 } ?: Result.Error("Response body is null")

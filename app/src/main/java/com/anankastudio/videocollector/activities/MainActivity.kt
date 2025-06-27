@@ -2,21 +2,26 @@ package com.anankastudio.videocollector.activities
 
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.WindowInsetsController
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.os.postDelayed
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
 import com.anankastudio.videocollector.R
 import com.anankastudio.videocollector.bottomsheet.NotificationPermissionBottomSheet
+import com.anankastudio.videocollector.bottomsheet.PrivacyPolicyBottomSheet
 import com.anankastudio.videocollector.databinding.ActivityMainBinding
 import com.anankastudio.videocollector.fragments.FragmentExplore
 import com.anankastudio.videocollector.fragments.FragmentFavorite
 import com.anankastudio.videocollector.fragments.FragmentHome
 import com.anankastudio.videocollector.interfaces.OnClickConfirm
+import com.anankastudio.videocollector.interfaces.OnClickPrivacyPolicy
 import com.anankastudio.videocollector.utilities.NotificationManager
 import com.anankastudio.videocollector.utilities.setupAds
 import com.anankastudio.videocollector.viewmodels.AdViewModel
@@ -25,7 +30,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), OnClickConfirm {
+class MainActivity : AppCompatActivity(), OnClickConfirm, OnClickPrivacyPolicy {
 
     @Inject
     lateinit var notificationManager: NotificationManager
@@ -36,6 +41,7 @@ class MainActivity : AppCompatActivity(), OnClickConfirm {
     private val exploreFragment = FragmentExplore()
     private val favoriteFragment = FragmentFavorite()
     private val notificationPermissionBottomSheet = NotificationPermissionBottomSheet()
+    private val privacyPolicyBottomSheet = PrivacyPolicyBottomSheet()
     lateinit var adViewModel: AdViewModel
 
     private val requestPermissionLauncher =
@@ -57,19 +63,29 @@ class MainActivity : AppCompatActivity(), OnClickConfirm {
         setupBottomNavigation()
         adViewModel = setupAds()
 
-        notificationManager.onPermissionGranted = {}
-        notificationManager.onPermissionDenied = {}
-
-        notificationManager.onShowPermissionRationale = {
-            viewModel.isHardNotificationRequest = false
-            showNotificationPermissionDialog()
-        }
-        notificationManager.onShowNotificationSetting = {
-            viewModel.isHardNotificationRequest = true
-            showNotificationPermissionDialog()
+        if (viewModel.isAlreadyReadPrivacyPolicy()) {
+            handleNotificationPermission()
         }
 
-        notificationManager.checkNotificationPermission(requestPermissionLauncher, this)
+        showPrivacyPolicyPermissionDialog()
+    }
+
+    private fun handleNotificationPermission() {
+        Handler(Looper.getMainLooper()).postDelayed({
+            notificationManager.onPermissionGranted = {}
+            notificationManager.onPermissionDenied = {}
+
+            notificationManager.onShowPermissionRationale = {
+                viewModel.isHardNotificationRequest = false
+                showNotificationPermissionDialog()
+            }
+            notificationManager.onShowNotificationSetting = {
+                viewModel.isHardNotificationRequest = true
+                showNotificationPermissionDialog()
+            }
+
+            notificationManager.checkNotificationPermission(requestPermissionLauncher, this)
+        }, 1500)
     }
 
     private fun showNotificationPermissionDialog() {
@@ -78,6 +94,16 @@ class MainActivity : AppCompatActivity(), OnClickConfirm {
             supportFragmentManager,
             NotificationPermissionBottomSheet.TAG
         )
+    }
+
+    private fun showPrivacyPolicyPermissionDialog() {
+        if (!viewModel.isAlreadyReadPrivacyPolicy()) {
+            privacyPolicyBottomSheet.listener = this
+            privacyPolicyBottomSheet.show(
+                supportFragmentManager,
+                PrivacyPolicyBottomSheet.TAG
+            )
+        }
     }
 
     private fun setupStatusBar() {
@@ -132,6 +158,18 @@ class MainActivity : AppCompatActivity(), OnClickConfirm {
         } else {
             notificationManager.requestPermission(requestPermissionLauncher)
         }
+    }
+
+    override fun onClickMustRead(url: String) {
+        viewModel.showExternalBrowser(url, this@MainActivity)
+    }
+
+    override fun onClickContinue() {
+        viewModel.setReadPrivacyPolicy()
+    }
+
+    override fun onPrivacyPolicyDialogDismissed() {
+        handleNotificationPermission()
     }
 
     override fun onBackPressed() {

@@ -23,6 +23,7 @@ import com.anankastudio.videocollector.databinding.FragmentHomeBinding
 import com.anankastudio.videocollector.interfaces.OnClickCustomizeWidget
 import com.anankastudio.videocollector.interfaces.OnClickMenu
 import com.anankastudio.videocollector.interfaces.OnClickVideo
+import com.anankastudio.videocollector.utilities.Constants
 import com.anankastudio.videocollector.utilities.CustomProgressDialog
 import com.anankastudio.videocollector.utilities.LetterSpacingSpan
 import com.anankastudio.videocollector.utilities.SpaceItemDecoration
@@ -214,14 +215,14 @@ class FragmentHome : Fragment(), OnClickMenu, OnClickCustomizeWidget {
 
     override fun onClickPrivacyPolicy() {
         viewModel.showExternalBrowser(
-            "https://sites.google.com/view/vliloom-privacy-policy",
+            Constants.URL_PRIVACY_POLICY,
             requireContext()
         )
     }
 
     override fun onClickTermsOfUse() {
         viewModel.showExternalBrowser(
-            "https://sites.google.com/view/vliloom-terms-of-use",
+            Constants.URL_TERMS_OF_USE,
             requireContext()
         )
     }

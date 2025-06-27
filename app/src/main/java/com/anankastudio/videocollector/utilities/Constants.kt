@@ -17,4 +17,7 @@ object Constants {
     const val DEFAULT_INTERSTITIAL = "z1mu55zfxh"
     const val MAIN_INTERSTITIAL = "z1mu55zfxh"
     const val COLLECTION_INTERSTITIAL = "u8zmg5qcau"
+
+    const val URL_PRIVACY_POLICY = "https://sites.google.com/view/vliloom-privacy-policy"
+    const val URL_TERMS_OF_USE = "https://sites.google.com/view/vliloom-terms-of-use"
 }
