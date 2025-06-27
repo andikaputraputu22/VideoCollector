@@ -11,7 +11,8 @@ interface ApiServiceVideo {
 
     @GET("popular")
     suspend fun getPopularVideo(
-        @Query("page") page: Int
+        @Query("page") page: Int,
+        @Query("per_page") perPage: Int = 10,
     ): Response<PopularResponse>
 
     @GET("search")
